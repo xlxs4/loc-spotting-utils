@@ -9,6 +9,7 @@ packages = [{include = "loc_spotting_utils"}]
 
 [tool.poetry.dependencies]
 python = "~3.11"
+pyside6 = "^6.4.0.1"
 
 [tool.poetry.group.dev]
 optional = true
