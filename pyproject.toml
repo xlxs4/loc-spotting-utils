@@ -1,0 +1,21 @@
+[tool.poetry]
+name = "loc-spotting-utils"
+version = "0.1.0"
+description = "Python utilties to assist in DIY microarray spotting using a 3D printer"
+authors = ["Orestis Ousoultzoglou <orousoultzoglou@gmail.com>"]
+license = "MIT"
+readme = "README.md"
+packages = [{include = "loc_spotting_utils"}]
+
+[tool.poetry.dependencies]
+python = "~3.11"
+
+[tool.poetry.group.dev]
+optional = true
+
+[tool.poetry.group.dev.dependencies]
+pyinstaller = "^5.6.2"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
