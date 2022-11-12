@@ -15,9 +15,6 @@ jobs:
         shell: bash
     runs-on: ${{ matrix.os }}
     steps:
-      - run: |
-          echo "Job running on ${{ runner.os }} server"
-          echo "Branch is ${{ github.ref }}"
       - name: Check out repository
         uses: actions/checkout@v3
       - name: Setup Python
@@ -39,7 +36,8 @@ jobs:
           path: ~/.cache
           key: venv-${{ runner.os }}-${{ steps.setup-python.outputs.python-version }}-${{ hashFiles('**/poetry.lock') }}
       - name: Install dependencies
-        run: poetry install --no-interaction --no-root --with dev
-      - run: |
+        run: |
+          poetry install --no-interaction --no-root --with dev
           source $VENV
-          echo "Job status is ${{ job.status }}"
+      - name: Build for ${{ matrix.os }}
+        run: pyinstaller src/hello_world.py
