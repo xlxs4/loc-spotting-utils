@@ -11,6 +11,11 @@ class MyWidget(QtWidgets.QWidget):
     def __init__(self):
         super().__init__()
 
+        dialog = QtWidgets.QFileDialog(self)
+        dialog.setFileMode(QtWidgets.QFileDialog.ExistingFile)
+        dialog.setNameFilter(self.tr("G-Code (*.gcode)"))
+        dialog.setViewMode(QtWidgets.QFileDialog.List)
+
         self.hello = ["Hello Wêreld!", "Hej Verden!", "Γειά σου Κόσμε!", "こんにちは世界"]
 
         self.button = QtWidgets.QPushButton("Click me!")
@@ -22,6 +27,11 @@ class MyWidget(QtWidgets.QWidget):
         self.layout.addWidget(self.button)
 
         self.button.clicked.connect(self.magic)
+
+        gcode_filename = None
+        if dialog.exec():
+            gcode_filename = dialog.selectedFiles()[0]
+            print(read_gcode(gcode_filename))
 
     @QtCore.Slot()
     def magic(self):
