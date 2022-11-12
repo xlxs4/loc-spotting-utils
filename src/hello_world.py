@@ -11,7 +11,7 @@ class MyWidget(QtWidgets.QWidget):
     def __init__(self):
         super().__init__()
 
-        self.hello = read_gcode("dummy.gcode")
+        self.hello = ["Hello Wêreld!", "Hej Verden!", "Γειά σου Κόσμε!", "こんにちは世界"]
 
         self.button = QtWidgets.QPushButton("Click me!")
         self.text = QtWidgets.QLabel("Hello World",
