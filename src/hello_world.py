@@ -1,13 +1,17 @@
-import sys
 import random
-from PySide6 import QtCore, QtWidgets, QtGui
+import sys
+
+import PySide6.QtCore as QtCore
+import PySide6.QtWidgets as QtWidgets
+
+from IOUtils import read_gcode
 
 
 class MyWidget(QtWidgets.QWidget):
     def __init__(self):
         super().__init__()
 
-        self.hello = ["Hallo Welt", "Hei maailma", "Hola Mundo", "Привет мир"]
+        self.hello = read_gcode("dummy.gcode")
 
         self.button = QtWidgets.QPushButton("Click me!")
         self.text = QtWidgets.QLabel("Hello World",
