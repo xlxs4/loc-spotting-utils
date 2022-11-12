@@ -41,3 +41,4 @@ jobs:
         run: |
           source $VENV
           pyinstaller src/hello_world.py
+          python -m pip cache dir
