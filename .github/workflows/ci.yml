@@ -51,5 +51,5 @@ jobs:
       - name: Archive binary artifacts
         uses: actions/upload-artifact@v3
         with:
-          name: dist pyinstaller bundle
+          name: ${{ matrix.os }}-bundle
           path: dist
