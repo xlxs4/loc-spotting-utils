@@ -47,7 +47,7 @@ jobs:
       - name: Build for ${{ matrix.os }}
         run: |
           source $VENV
-          pyinstaller src/hello_world.py
+          pyinstaller src/main.py
       - name: Archive binary artifacts
         uses: actions/upload-artifact@v3
         with:
