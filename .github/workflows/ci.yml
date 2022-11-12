@@ -36,8 +36,8 @@ jobs:
           path: ~/.cache
           key: venv-${{ runner.os }}-${{ steps.setup-python.outputs.python-version }}-${{ hashFiles('**/poetry.lock') }}
       - name: Install dependencies
-        run: |
-          poetry install --no-interaction --no-root -E build
-          source $VENV
+        run: poetry install --no-interaction --no-root -E build
       - name: Build for ${{ matrix.os }}
-        run: pyinstaller src/hello_world.py
+        run: |
+          source $VENV
+          pyinstaller src/hello_world.py
