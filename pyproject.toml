@@ -11,11 +11,10 @@ packages = [{include = "loc_spotting_utils"}]
 python = "~3.11"
 pyside6 = "^6.4.0.1"
 
-[tool.poetry.group.dev]
-optional = true
+pyinstaller = { version = "^5.6.2", optional = true }
 
-[tool.poetry.group.dev.dependencies]
-pyinstaller = "^5.6.2"
+[tool.poetry.extras]
+build = ["pyinstaller"]
 
 [build-system]
 requires = ["poetry-core"]
