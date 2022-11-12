@@ -10,6 +10,13 @@ jobs:
         python-version: ["3.11"]
         poetry-version: ["1.2.2"]
         os: [ubuntu-latest, macos-latest, windows-latest]
+        include:
+          - pip-cache-path: ~/.cache
+            os: ubuntu-latest
+          - pip-cache-path: ~/.cache
+            os: macos-latest
+          - pip-cache-path: ~\appdata\local\pip\cache
+            os: windows-latest
     defaults:
       run:
         shell: bash
@@ -33,7 +40,7 @@ jobs:
         id: cached-pip-wheels
         uses: actions/cache@v3
         with:
-          path: ~/.cache
+          path: ${{ matrix.pip-cache-path }}
           key: venv-${{ runner.os }}-${{ steps.setup-python.outputs.python-version }}-${{ hashFiles('**/poetry.lock') }}
       - name: Install dependencies
         run: poetry install --no-interaction --no-root -E build
@@ -41,4 +48,3 @@ jobs:
         run: |
           source $VENV
           pyinstaller src/hello_world.py
-          python -m pip cache dir
