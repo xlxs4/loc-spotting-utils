@@ -13,18 +13,16 @@ class GCodeUtils(QtWidgets.QWidget):
 
     def init_ui(self) -> None:
         self.create_browse_group_box()
+        self.create_viewer_group_box()
 
         self.selected_gcode_path = QtWidgets.QLabel("Selected G-Code: ")
-
-        self.gcode_viewer = QtWidgets.QPlainTextEdit()
-        self.gcode_viewer.setReadOnly(True)
 
         main_layout = QtWidgets.QVBoxLayout()
 
         main_layout.addWidget(self._browse_group_box)
+        main_layout.addWidget(self._viewer_group_box)
 
         main_layout.addWidget(self.selected_gcode_path)
-        main_layout.addWidget(self.gcode_viewer)
 
         self.setLayout(main_layout)
 
@@ -40,6 +38,17 @@ class GCodeUtils(QtWidgets.QWidget):
         browse_button.clicked.connect(self.browse_gcode)
 
         layout.addWidget(browse_button)
+
+        self._browse_group_box.setLayout(layout)
+
+    def create_viewer_group_box(self):
+        self._viewer_group_box = QtWidgets.QGroupBox("Viewer")
+        layout = QtWidgets.QHBoxLayout()
+
+        gcode_viewer = QtWidgets.QPlainTextEdit()
+        gcode_viewer.setReadOnly(True)
+
+        layout.addWidget(gcode_viewer)
 
         self._browse_group_box.setLayout(layout)
 
