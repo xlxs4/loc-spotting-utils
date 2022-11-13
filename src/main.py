@@ -12,7 +12,7 @@ class GCodeUtils(QtWidgets.QWidget):
 
         self.init_ui()
 
-    def init_ui(self):
+    def init_ui(self) -> None:
         self.gcode_viewer = QtWidgets.QPlainTextEdit()
         self.gcode_viewer.setReadOnly(True)
 
@@ -26,7 +26,7 @@ class GCodeUtils(QtWidgets.QWidget):
 
         self.gcode = None
 
-    def browse_gcode(self):
+    def browse_gcode(self) -> None:
         dialog = QtWidgets.QFileDialog(self)
         dialog.setFileMode(QtWidgets.QFileDialog.ExistingFile)
         dialog.setNameFilter(self.tr("G-Code (*.gcode)"))
