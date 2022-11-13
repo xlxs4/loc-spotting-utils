@@ -1,9 +1,8 @@
 import sys
 
-import PySide6.QtCore as QtCore
 import PySide6.QtWidgets as QtWidgets
 
-from IOUtils import read_gcode
+from IOUtils import lines_to_text, read_gcode
 
 
 class GCodeUtils(QtWidgets.QWidget):
@@ -38,6 +37,7 @@ class GCodeUtils(QtWidgets.QWidget):
             gcode_filename = dialog.selectedFiles()[0]
             self.selected_gcode_path.setText(f"Selected G-Code: {gcode_filename}")
             self.gcode = read_gcode(gcode_filename)
+            self.gcode_viewer.setPlainText(lines_to_text(self.gcode))
 
 
 if __name__ == "__main__":

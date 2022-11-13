@@ -9,6 +9,9 @@ def _str_to_path(str: str) -> Path:
 def _lines_to_str_lines(lines: lines) -> str_lines:
     return [str(line) for line in lines]
 
+def lines_to_text(lines: lines) -> str:
+    return '\n'.join(str(g) for g in lines)
+
 def _read_line_by_line(filename: Path) -> lines:
     with open(filename) as file:
         return [gcode_line(line.rstrip()) for line in file]
