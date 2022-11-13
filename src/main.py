@@ -10,12 +10,17 @@ class GCodeUtils(QtWidgets.QWidget):
     def __init__(self):
         super().__init__()
 
-        self.button = QtWidgets.QPushButton("Browse")
+        self.init_ui()
+
+    def init_ui(self):
+        self.browse_button = QtWidgets.QPushButton("Browse")
 
         self.layout = QtWidgets.QVBoxLayout(self)
-        self.layout.addWidget(self.button)
+        self.layout.addWidget(self.browse_button)
 
-        self.button.clicked.connect(self.browse_gcode)
+        self.browse_button.clicked.connect(self.browse_gcode)
+
+        self.gcode = None
 
     def browse_gcode(self):
         dialog = QtWidgets.QFileDialog(self)
@@ -25,7 +30,7 @@ class GCodeUtils(QtWidgets.QWidget):
 
         if dialog.exec():
             gcode_filename = dialog.selectedFiles()[0]
-            print(read_gcode(gcode_filename))
+            self.gcode = read_gcode(gcode_filename)
 
 
 if __name__ == "__main__":
