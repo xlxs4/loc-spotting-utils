@@ -15,3 +15,12 @@ def _read_line_by_line(filename: Path) -> lines:
 
 def read_gcode(filename: str) -> lines:
     return _read_line_by_line(_str_to_path(filename))
+
+def _write_line_by_line(filename: Path, lines: str_lines):
+    with open(filename, 'w+') as file:
+        for line in lines[:-1]:
+            file.write(line + '\n')
+        file.write(lines[-1])
+
+def write_gcode(filename: str, lines: str_lines):
+    _write_line_by_line(_str_to_path(filename), lines)
