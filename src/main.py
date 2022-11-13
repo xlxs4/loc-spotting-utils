@@ -13,6 +13,9 @@ class GCodeUtils(QtWidgets.QWidget):
         self.init_ui()
 
     def init_ui(self):
+        self.gcode_viewer = QtWidgets.QPlainTextEdit()
+        self.gcode_viewer.setReadOnly(True)
+
         self.browse_button = QtWidgets.QPushButton("Browse")
 
         self.layout = QtWidgets.QVBoxLayout(self)
