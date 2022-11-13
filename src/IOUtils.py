@@ -1,17 +1,17 @@
 from pathlib import Path
 
+from pygcode import Line, GCodeLinearMove
 
-file_lines = list[str]
 
+lines = list[Line]
+str_lines = list[str]
 
 def _str_to_path(str: str) -> Path:
     return Path(str)
 
-def _read_line_by_line(filename: Path) -> file_lines:
+def _read_line_by_line(filename: Path) -> lines:
     with open(filename) as file:
-        return [line.rstrip() for line in file]
+        return [Line(line.rstrip()) for line in file]
 
-def read_gcode(filename: str) -> file_lines:
+def read_gcode(filename: str) -> lines:
     return _read_line_by_line(_str_to_path(filename))
-
-
