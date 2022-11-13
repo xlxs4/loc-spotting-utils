@@ -19,6 +19,7 @@ class GCodeUtils(QtWidgets.QWidget):
         self.browse_button = QtWidgets.QPushButton("Browse")
 
         self.layout = QtWidgets.QVBoxLayout(self)
+        self.layout.addWidget(self.gcode_viewer)
         self.layout.addWidget(self.browse_button)
 
         self.browse_button.clicked.connect(self.browse_gcode)
