@@ -14,7 +14,7 @@ class GCodeUtils(QtWidgets.QWidget):
     def init_ui(self) -> None:
         self.create_io_group_box()
 
-        self.selected_gcode_path = QtWidgets.QLabel("Selected G-Code: ")
+        self.selected_gcode_path = QtWidgets.QLabel(self.tr("Selected G-Code: "))
 
         self.gcode_viewer = QtWidgets.QPlainTextEdit()
         self.gcode_viewer.setReadOnly(True)
@@ -28,18 +28,18 @@ class GCodeUtils(QtWidgets.QWidget):
 
         self.setLayout(main_layout)
 
-        self.setWindowTitle("Lab-On-a-Chip Spotting Utilties")
+        self.setWindowTitle(self.tr("Lab-On-a-Chip Spotting Utilties"))
 
         self.gcode = None
 
     def create_io_group_box(self):
-        self._io_group_box = QtWidgets.QGroupBox("IO")
+        self._io_group_box = QtWidgets.QGroupBox(self.tr("IO"))
         layout = QtWidgets.QHBoxLayout()
 
-        browse_button = QtWidgets.QPushButton("Browse")
+        browse_button = QtWidgets.QPushButton(self.tr("Browse"))
         browse_button.clicked.connect(self.browse_gcode)
 
-        save_button = QtWidgets.QPushButton("Save")
+        save_button = QtWidgets.QPushButton(self.tr("Save"))
         save_button.clicked.connect(self.save_gcode)
 
         layout.addWidget(browse_button)
@@ -58,7 +58,7 @@ class GCodeUtils(QtWidgets.QWidget):
         if dialog.exec():
             gcode_filename = dialog.selectedFiles()[0]
 
-            self.selected_gcode_path.setText(f"Selected G-Code: {gcode_filename}")
+            self.selected_gcode_path.setText(self.tr(f"Selected G-Code: {gcode_filename}"))
             self.gcode = read_gcode(gcode_filename)
 
             self.update_gcode_viewer()
@@ -70,7 +70,7 @@ class GCodeUtils(QtWidgets.QWidget):
         dialog.setViewMode(QtWidgets.QFileDialog.List)
         dialog.setAcceptMode(QtWidgets.QFileDialog.AcceptSave)
 
-        dialog.setDefaultSuffix("gcode")
+        dialog.setDefaultSuffix(self.tr("gcode"))
         dialog.setNameFilter(self.tr("G-Code (*.gcode)"))
 
         if dialog.exec():
