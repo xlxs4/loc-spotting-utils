@@ -12,20 +12,36 @@ class GCodeUtils(QtWidgets.QWidget):
         self.init_ui()
 
     def init_ui(self) -> None:
-        self.selected_gcode_path = QtWidgets.QLabel("Selected G-Code: ")
+        self.create_browse_group_box()
 
-        self.browse_button = QtWidgets.QPushButton("Browse")
-        self.browse_button.clicked.connect(self.browse_gcode)
+        self.selected_gcode_path = QtWidgets.QLabel("Selected G-Code: ")
 
         self.gcode_viewer = QtWidgets.QPlainTextEdit()
         self.gcode_viewer.setReadOnly(True)
 
-        self.layout = QtWidgets.QVBoxLayout(self)
-        self.layout.addWidget(self.selected_gcode_path)
-        self.layout.addWidget(self.browse_button)
-        self.layout.addWidget(self.gcode_viewer)
+        main_layout = QtWidgets.QVBoxLayout()
+
+        main_layout.addWidget(self._browse_group_box)
+
+        main_layout.addWidget(self.selected_gcode_path)
+        main_layout.addWidget(self.gcode_viewer)
+
+        self.setLayout(main_layout)
+
+        self.setWindowTitle("Lab-On-a-Chip Spotting Utilties")
 
         self.gcode = None
+
+    def create_browse_group_box(self):
+        self._browse_group_box = QtWidgets.QGroupBox("Browse G-Code")
+        layout = QtWidgets.QHBoxLayout()
+
+        browse_button = QtWidgets.QPushButton("Browse")
+        browse_button.clicked.connect(self.browse_gcode)
+
+        layout.addWidget(browse_button)
+
+        self._browse_group_box.setLayout(layout)
 
     def browse_gcode(self) -> None:
         dialog = QtWidgets.QFileDialog(self)
@@ -35,9 +51,14 @@ class GCodeUtils(QtWidgets.QWidget):
 
         if dialog.exec():
             gcode_filename = dialog.selectedFiles()[0]
+
             self.selected_gcode_path.setText(f"Selected G-Code: {gcode_filename}")
             self.gcode = read_gcode(gcode_filename)
-            self.gcode_viewer.setPlainText(lines_to_text(self.gcode))
+
+            self.update_gcode_viewer()          
+    
+    def update_gcode_viewer(self) -> None:
+        self.gcode_viewer.setPlainText(lines_to_text(self.gcode))
 
 
 if __name__ == "__main__":
