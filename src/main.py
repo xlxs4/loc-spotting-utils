@@ -9,10 +9,10 @@ class GCodeUtils(QtWidgets.QMainWindow):
     def __init__(self):
         super().__init__()
 
-        self.init_ui()
+        self._init_ui()
 
-    def init_ui(self) -> None:
-        self.create_io_group_box()
+    def _init_ui(self) -> None:
+        self._create_io_group_box()
 
         self.selected_gcode_path = QtWidgets.QLabel(self.tr("Selected G-Code: "))
 
@@ -36,22 +36,22 @@ class GCodeUtils(QtWidgets.QMainWindow):
 
         self.gcode = None
 
-    def create_io_group_box(self):
+    def _create_io_group_box(self):
         self._io_group_box = QtWidgets.QGroupBox(self.tr("IO"))
         layout = QtWidgets.QHBoxLayout()
 
         browse_button = QtWidgets.QPushButton(self.tr("Browse"))
-        browse_button.clicked.connect(self.browse_gcode)
+        browse_button.clicked.connect(self._browse_gcode)
 
         save_button = QtWidgets.QPushButton(self.tr("Save"))
-        save_button.clicked.connect(self.save_gcode)
+        save_button.clicked.connect(self._save_gcode)
 
         layout.addWidget(browse_button)
         layout.addWidget(save_button)
 
         self._io_group_box.setLayout(layout)
 
-    def browse_gcode(self) -> None:
+    def _browse_gcode(self) -> None:
         dialog = QtWidgets.QFileDialog(self)
 
         dialog.setFileMode(QtWidgets.QFileDialog.ExistingFile)
@@ -65,9 +65,9 @@ class GCodeUtils(QtWidgets.QMainWindow):
             self.selected_gcode_path.setText(self.tr(f"Selected G-Code: {gcode_filename}"))
             self.gcode = read_gcode(gcode_filename)
 
-            self.update_gcode_viewer()
+            self._update_gcode_viewer()
 
-    def save_gcode(self) -> None:
+    def _save_gcode(self) -> None:
         dialog = QtWidgets.QFileDialog(self)
 
         dialog.setFileMode(QtWidgets.QFileDialog.AnyFile)
@@ -81,7 +81,7 @@ class GCodeUtils(QtWidgets.QMainWindow):
             gcode_filename = dialog.selectedFiles()[0]
             write_gcode(gcode_filename, self.gcode)
     
-    def update_gcode_viewer(self) -> None:
+    def _update_gcode_viewer(self) -> None:
         self.gcode_viewer.setPlainText(lines_to_text(self.gcode))
 
 
