@@ -95,7 +95,11 @@ class GCodeUtils(QtWidgets.QMainWindow):
         coor_dropdown = QtWidgets.QComboBox()
         coor_dropdown.addItems(['X', 'Y', 'Z'])
 
+        new_coor_selector = QtWidgets.QSpinBox()
+        new_coor_selector.setRange(0, 300)
+
         layout.addWidget(coor_dropdown)
+        layout.addWidget(new_coor_selector)
 
         self._coor_group_box.setLayout(layout)
 
