@@ -98,11 +98,14 @@ class GCodeUtils(QtWidgets.QMainWindow):
         new_coor_selector = QtWidgets.QSpinBox()
         new_coor_selector.setRange(0, 300)
 
+        specific_val_checkbox = QtWidgets.QCheckBox(self.tr("Specific value only"))
+
         specific_val_selector = QtWidgets.QSpinBox()
         specific_val_selector.setMinimum(0)
 
         layout.addWidget(coor_dropdown)
         layout.addWidget(new_coor_selector)
+        layout.addWidget(specific_val_checkbox)
         layout.addWidget(specific_val_selector)
 
         self._coor_group_box.setLayout(layout)
