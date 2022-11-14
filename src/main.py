@@ -28,6 +28,7 @@ class GCodeUtils(QtWidgets.QMainWindow):
         main_layout.addWidget(self._io_group_box)
         main_layout.addWidget(self.selected_gcode_path)
         main_layout.addWidget(self.gcode_viewer)
+        main_layout.addWidget(self._coor_group_box)
         self.setLayout(main_layout)
 
         self.setWindowTitle(self.tr("Lab-On-a-Chip Spotting Utilties"))
