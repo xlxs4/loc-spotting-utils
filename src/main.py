@@ -1,8 +1,12 @@
 import sys
 
+import PySide6.QtCore as QtCore
+import PySide6.QtGui as QtGui
+
 import PySide6.QtWidgets as QtWidgets
 
 from IOUtils import lines_to_text, read_gcode, write_gcode
+from paths import get_path
 
 
 class GCodeUtils(QtWidgets.QMainWindow):
@@ -33,6 +37,21 @@ class GCodeUtils(QtWidgets.QMainWindow):
         dummy_widget = QtWidgets.QWidget()
         dummy_widget.setLayout(main_layout)
         self.setCentralWidget(dummy_widget)
+
+        toolbar = QtWidgets.QToolBar("Edit")
+        toolbar.setIconSize(QtCore.QSize(25, 25))
+        self.addToolBar(toolbar)
+
+        path = str(get_path("assets-replace"))
+        button_action = QtGui.QAction(QtGui.QIcon(path), "Your button", self)
+        button_action.setStatusTip("This is your button")
+
+        button_action.triggered.connect(self.onMyToolBarButtonClick)
+        button_action.setCheckable(True)
+
+        toolbar.addAction(button_action)
+
+        self.setStatusBar(QtWidgets.QStatusBar(self))
 
         self.gcode = None
 
