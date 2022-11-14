@@ -87,6 +87,17 @@ class GCodeUtils(QtWidgets.QMainWindow):
 
         self._io_group_box.setLayout(layout)
 
+    def _create_coor_group_box(self) -> None:
+        self._coor_group_box = QtWidgets.QGroupBox(self.tr("Coordinates"))
+        layout = QtWidgets.QHBoxLayout()
+
+        coor_dropdown = QtWidgets.QComboBox()
+        coor_dropdown.addItems(['X', 'Y', 'Z'])
+
+        layout.addWidget(coor_dropdown)
+
+        self._coor_group_box.setLayout(layout)
+
     def _browse_gcode(self) -> None:
         dialog = QtWidgets.QFileDialog(self)
         dialog.setFileMode(QtWidgets.QFileDialog.ExistingFile)
