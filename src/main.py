@@ -19,6 +19,8 @@ class GCodeUtils(QtWidgets.QMainWindow):
     def _init_ui(self) -> None:
         self._create_io_group_box()
         self._create_coor_group_box()
+        self._create_coor_vline_separator()
+        self._create_new_val_group_box()
 
         self.selected_gcode_path = QtWidgets.QLabel(self.tr("Selected G-Code: "))
 
@@ -30,6 +32,8 @@ class GCodeUtils(QtWidgets.QMainWindow):
         main_layout.addWidget(self.selected_gcode_path)
         main_layout.addWidget(self.gcode_viewer)
         main_layout.addWidget(self._coor_group_box)
+        main_layout.addWidget(self._vline_separator)
+        main_layout.addWidget(self._new_val_group_box)
         self.setLayout(main_layout)
 
         self.setWindowTitle(self.tr("Lab-On-a-Chip Spotting Utilties"))
@@ -113,7 +117,7 @@ class GCodeUtils(QtWidgets.QMainWindow):
     def _create_coor_group_box(self) -> None:
         SELECTOR_MIN, SELECTOR_MAX = (0, 300)
 
-        self._coor_group_box = QtWidgets.QGroupBox(self.tr("Coordinates"))
+        self._coor_group_box = QtWidgets.QGroupBox(self.tr("Select coordinate/operator value"))
         layout = QtWidgets.QHBoxLayout()
 
         self._coor_dropdown = QtWidgets.QComboBox()
@@ -122,17 +126,34 @@ class GCodeUtils(QtWidgets.QMainWindow):
         self._new_coor_val = QtWidgets.QSpinBox()
         self._new_coor_val.setRange(SELECTOR_MIN, SELECTOR_MAX)
 
+        layout.addWidget(self._coor_dropdown)
+        layout.addWidget(self._new_coor_val)
+
+        self._coor_group_box.setLayout(layout)
+
+    def _create_coor_vline_separator(self) -> None:
+        vertical_line = QtWidgets.QFrame()
+        vertical_line.Shape(QtWidgets.QFrame.VLine)
+        vertical_line.setLineWidth(20)
+
+        self._vline_separator = vertical_line
+
+    def _create_new_val_group_box(self) -> None:
+        SELECTOR_MIN, SELECTOR_MAX = (0, 300)
+
+        self._new_val_group_box = QtWidgets.QGroupBox(self.tr("Only change specific value"))
+        layout = QtWidgets.QHBoxLayout()
+
         self._specific_val_checkbox = QtWidgets.QCheckBox(self.tr("Specific value only"))
 
         self._specific_val_selector = QtWidgets.QSpinBox()
         self._specific_val_selector.setRange(SELECTOR_MIN, SELECTOR_MAX)
 
-        layout.addWidget(self._coor_dropdown)
-        layout.addWidget(self._new_coor_val)
         layout.addWidget(self._specific_val_checkbox)
         layout.addWidget(self._specific_val_selector)
 
-        self._coor_group_box.setLayout(layout)
+        self._new_val_group_box.setLayout(layout)
+
 
     def _browse_gcode(self) -> None:
         dialog = QtWidgets.QFileDialog(self)
