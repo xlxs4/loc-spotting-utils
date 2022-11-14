@@ -5,7 +5,7 @@ import PySide6.QtWidgets as QtWidgets
 from IOUtils import lines_to_text, read_gcode, write_gcode
 
 
-class GCodeUtils(QtWidgets.QWidget):
+class GCodeUtils(QtWidgets.QMainWindow):
     def __init__(self):
         super().__init__()
 
@@ -29,6 +29,10 @@ class GCodeUtils(QtWidgets.QWidget):
         self.setLayout(main_layout)
 
         self.setWindowTitle(self.tr("Lab-On-a-Chip Spotting Utilties"))
+
+        dummy_widget = QtWidgets.QWidget()
+        dummy_widget.setLayout(main_layout)
+        self.setCentralWidget(dummy_widget)
 
         self.gcode = None
 
@@ -82,10 +86,11 @@ class GCodeUtils(QtWidgets.QWidget):
 
 
 if __name__ == "__main__":
+    WIDTH, HEIGHT = (600, 700)
     app = QtWidgets.QApplication([])
 
-    widget = GCodeUtils()
-    widget.resize(800, 600)
-    widget.show()
+    window = GCodeUtils()
+    window.resize(WIDTH, HEIGHT)
+    window.show()
 
     sys.exit(app.exec())
