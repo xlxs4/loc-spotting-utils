@@ -94,6 +94,14 @@ optional = true
 python-versions = ">=3.7"
 
 [[package]]
+name = "pyprojroot"
+version = "0.2.0"
+description = "Find project root paths and return relative project files"
+category = "main"
+optional = false
+python-versions = "*"
+
+[[package]]
 name = "pyside6"
 version = "6.4.0.1"
 description = "Python bindings for the Qt cross-platform application and UI framework"
@@ -172,7 +180,7 @@ build = ["pyinstaller"]
 [metadata]
 lock-version = "1.1"
 python-versions = "~3.11"
-content-hash = "89be513a4c777cb99458f1479e1a32460433cf860559717c4e7985a0cff8aa4c"
+content-hash = "14fd3d0eebdae4296e25a77e0ee54aab2db900cdf1f5056908cbaef162245742"
 
 [metadata.files]
 altgraph = [
@@ -216,6 +224,10 @@ pyinstaller = [
 pyinstaller-hooks-contrib = [
     {file = "pyinstaller-hooks-contrib-2022.13.tar.gz", hash = "sha256:e06d0881e599d94dc39c6ed1917f0ad9b1858a2478b9892faac18bd48bcdc2de"},
     {file = "pyinstaller_hooks_contrib-2022.13-py2.py3-none-any.whl", hash = "sha256:91ecb30db757a8db8b6661d91d5df99e0998245f05f5cfaade0550922c7030a3"},
+]
+pyprojroot = [
+    {file = "pyprojroot-0.2.0-py3-none-any.whl", hash = "sha256:741e8b4878a0d6bb6b06ec09aa05797130289e2127aa595b8f1cbadce697909f"},
+    {file = "pyprojroot-0.2.0.tar.gz", hash = "sha256:a79900dc52ee097bfd8d917a3d45e2b98494c47a57ba3a71bf609d7a156732e8"},
 ]
 pyside6 = [
     {file = "PySide6-6.4.0.1-cp37-abi3-macosx_10_9_universal2.whl", hash = "sha256:a45ea81fa4d1fdb7aeb7250508b07fa209e6bfb26becf5b24751d3769cade292"},
