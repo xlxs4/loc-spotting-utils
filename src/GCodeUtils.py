@@ -7,7 +7,10 @@ from eltypes import gcode_line, operator
 from operators import replace_op
 
 
-def _apply_op_to_coor(line: gcode_line, coor: str, op: operator, val: int, only_for_val:Union[int, None]) -> gcode_line:
+def _apply_op_to_coor(
+    line: gcode_line, coor: str, op: operator, val: int,
+    only_for_val: Union[int, None]
+) -> gcode_line:
     gcodes = line.block.gcodes
     for gcode in gcodes:
         if type(gcode) is GCodeLinearMove:
@@ -18,14 +21,32 @@ def _apply_op_to_coor(line: gcode_line, coor: str, op: operator, val: int, only_
                         setattr(gcode, coor, op(current_coor, val))
                 else:
                     setattr(gcode, coor, op(current_coor, val))
-    
+
     return line
 
-def inc_coor(line: gcode_line, coor: str, val: int, only_for_val:int = None) -> gcode_line:
+
+def inc_coor(
+    line: gcode_line,
+    coor: str,
+    val: int,
+    only_for_val: int = None
+) -> gcode_line:
     return _apply_op_to_coor(line, coor, add, val, only_for_val)
 
-def dec_coor(line: gcode_line, coor: str, val: int, only_for_val:int = None) -> gcode_line:
+
+def dec_coor(
+    line: gcode_line,
+    coor: str,
+    val: int,
+    only_for_val: int = None
+) -> gcode_line:
     return _apply_op_to_coor(line, coor, sub, val, only_for_val)
 
-def replace_coor(line: gcode_line, coor: str, val: int, only_for_val:int = None) -> gcode_line:
+
+def replace_coor(
+    line: gcode_line,
+    coor: str,
+    val: int,
+    only_for_val: int = None
+) -> gcode_line:
     return _apply_op_to_coor(line, coor, replace_op, val, only_for_val)

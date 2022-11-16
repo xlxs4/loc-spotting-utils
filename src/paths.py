@@ -10,5 +10,6 @@ _PATHS = {
     "config": here("src/config.toml")
 }
 
+
 def get_path(name: str) -> Path:
     return _PATHS[name]
