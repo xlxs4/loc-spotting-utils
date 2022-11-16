@@ -1,5 +1,6 @@
 import sys
 
+from pyprojroot import here
 import PySide6.QtCore as QtCore
 import PySide6.QtGui as QtGui
 
@@ -184,7 +185,7 @@ class GCodeUtils(QtWidgets.QMainWindow):
 
 
 if __name__ == "__main__":
-    CONFIG = read_config("src/config.toml")
+    CONFIG = read_config(get_path("config"))
     WINDOW_CONFIG = CONFIG["window"]
 
     app = QtWidgets.QApplication([])
