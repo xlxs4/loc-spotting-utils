@@ -5,22 +5,28 @@ import PySide6.QtGui as QtGui
 
 import PySide6.QtWidgets as QtWidgets
 
+from eltypes import config
 from GCodeUtils import dec_coor, inc_coor, replace_coor
-from IOUtils import lines_to_text, read_gcode, write_gcode
+from IOUtils import lines_to_text, read_config, read_gcode, write_gcode
 from paths import get_path
 
 
 class GCodeUtils(QtWidgets.QMainWindow):
-    def __init__(self):
+    def __init__(self, config: config):
         super().__init__()
 
-        self._init_ui()
+        ICON_CONFIG = config["icon"]
+        COOR_CONFIG = config["coordinate"]
 
-    def _init_ui(self) -> None:
+        self._init_ui(COOR_CONFIG, ICON_CONFIG)
+
+    def _init_ui(self, coor_config: config, icon_config: config) -> None:
+        selector_threshold = coor_config["threshold"]
+
         self._create_io_group_box()
-        self._create_coor_group_box()
+        self._create_coor_group_box(selector_threshold)
         self._create_coor_frame_separator()
-        self._create_new_val_group_box()
+        self._create_new_val_group_box(selector_threshold)
 
         self.selected_gcode_path = QtWidgets.QLabel(self.tr("Selected G-Code: "))
 
@@ -44,8 +50,7 @@ class GCodeUtils(QtWidgets.QMainWindow):
         self.setCentralWidget(dummy_widget)
 
         toolbar = QtWidgets.QToolBar("Edit")
-        ICON_WIDTH, ICON_HEIGHT = (25, 25)
-        toolbar.setIconSize(QtCore.QSize(ICON_WIDTH, ICON_HEIGHT))
+        toolbar.setIconSize(QtCore.QSize(icon_config["dimension"]["width"], icon_config["dimension"]["height"]))
         self.addToolBar(toolbar)
 
         plus_button = QtWidgets.QPushButton(QtGui.QIcon(str(get_path("assets-plus"))), "", self)
@@ -114,9 +119,7 @@ class GCodeUtils(QtWidgets.QMainWindow):
 
         self._io_group_box.setLayout(layout)
 
-    def _create_coor_group_box(self) -> None:
-        SELECTOR_MIN, SELECTOR_MAX = (0, 300)
-
+    def _create_coor_group_box(self, selector_threshold: config) -> None:
         self._coor_group_box = QtWidgets.QGroupBox(self.tr("Select coordinate/operator value"))
         layout = QtWidgets.QHBoxLayout()
 
@@ -124,7 +127,7 @@ class GCodeUtils(QtWidgets.QMainWindow):
         self._coor_dropdown.addItems(['X', 'Y', 'Z'])
 
         self._new_coor_val = QtWidgets.QSpinBox()
-        self._new_coor_val.setRange(SELECTOR_MIN, SELECTOR_MAX)
+        self._new_coor_val.setRange(selector_threshold["min"], selector_threshold["max"])
 
         layout.addWidget(self._coor_dropdown)
         layout.addWidget(self._new_coor_val)
@@ -135,16 +138,14 @@ class GCodeUtils(QtWidgets.QMainWindow):
         frame = QtWidgets.QFrame()
         self._frame_separator = frame
 
-    def _create_new_val_group_box(self) -> None:
-        SELECTOR_MIN, SELECTOR_MAX = (0, 300)
-
+    def _create_new_val_group_box(self, selector_threshold: config) -> None:
         self._new_val_group_box = QtWidgets.QGroupBox(self.tr("Only change specific value"))
         layout = QtWidgets.QHBoxLayout()
 
         self._specific_val_checkbox = QtWidgets.QCheckBox(self.tr("Specific value only"))
 
         self._specific_val_selector = QtWidgets.QSpinBox()
-        self._specific_val_selector.setRange(SELECTOR_MIN, SELECTOR_MAX)
+        self._specific_val_selector.setRange(selector_threshold["min"], selector_threshold["max"])
 
         layout.addWidget(self._specific_val_checkbox)
         layout.addWidget(self._specific_val_selector)
@@ -183,11 +184,13 @@ class GCodeUtils(QtWidgets.QMainWindow):
 
 
 if __name__ == "__main__":
-    WIDTH, HEIGHT = (600, 700)
+    CONFIG = read_config("src/config.toml")
+    WINDOW_CONFIG = CONFIG["window"]
+
     app = QtWidgets.QApplication([])
 
-    window = GCodeUtils()
-    window.resize(WIDTH, HEIGHT)
+    window = GCodeUtils(CONFIG)
+    window.resize(WINDOW_CONFIG["dimension"]["width"], WINDOW_CONFIG["dimension"]["height"])
     window.show()
 
     sys.exit(app.exec())
