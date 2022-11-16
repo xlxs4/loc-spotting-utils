@@ -1,6 +1,7 @@
 from pathlib import Path
+import tomllib
 
-from eltypes import gcode_line, lines, str_lines
+from eltypes import config, gcode_line, lines, str_lines
 
 
 def _str_to_path(str: str) -> Path:
@@ -28,3 +29,11 @@ def _write_line_by_line(filename: Path, lines: lines):
 
 def write_gcode(filename: str, lines: lines):
     _write_line_by_line(_str_to_path(filename), lines)
+
+def read_config(filename: str) -> config:
+    return _read_config(_str_to_path(filename))
+
+def _read_config(filename: Path) -> config:
+    with open(filename, mode='rb') as fp:
+        config = tomllib.load(fp)
+    return config
