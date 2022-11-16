@@ -19,7 +19,7 @@ class GCodeUtils(QtWidgets.QMainWindow):
     def _init_ui(self) -> None:
         self._create_io_group_box()
         self._create_coor_group_box()
-        self._create_coor_vline_separator()
+        self._create_coor_frame_separator()
         self._create_new_val_group_box()
 
         self.selected_gcode_path = QtWidgets.QLabel(self.tr("Selected G-Code: "))
@@ -32,7 +32,7 @@ class GCodeUtils(QtWidgets.QMainWindow):
         main_layout.addWidget(self.selected_gcode_path)
         main_layout.addWidget(self.gcode_viewer)
         main_layout.addWidget(self._coor_group_box)
-        main_layout.addWidget(self._vline_separator)
+        main_layout.addWidget(self._frame_separator)
         main_layout.addWidget(self._new_val_group_box)
         self.setLayout(main_layout)
 
@@ -131,12 +131,9 @@ class GCodeUtils(QtWidgets.QMainWindow):
 
         self._coor_group_box.setLayout(layout)
 
-    def _create_coor_vline_separator(self) -> None:
-        vertical_line = QtWidgets.QFrame()
-        vertical_line.Shape(QtWidgets.QFrame.VLine)
-        vertical_line.setLineWidth(20)
-
-        self._vline_separator = vertical_line
+    def _create_coor_frame_separator(self) -> None:
+        frame = QtWidgets.QFrame()
+        self._frame_separator = frame
 
     def _create_new_val_group_box(self) -> None:
         SELECTOR_MIN, SELECTOR_MAX = (0, 300)
