@@ -1,0 +1,17 @@
+[icon]
+
+    [icon.dimension]
+    width = 25
+    height = 25
+
+[window]
+
+    [window.dimension]
+    width = 600
+    height = 700
+
+[coordinate]
+
+    [coordinate.threshold]
+    min = 0
+    max = 300
