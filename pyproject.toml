@@ -14,9 +14,11 @@ pyside6 = "^6.4.0.1"
 pyinstaller = { version = "^5.6.2", optional = true }
 pygcode = "^0.2.1"
 pyprojroot = "^0.2.0"
+yapf = { version = "^0.32.0", optional = true }
 
 [tool.poetry.extras]
 build = ["pyinstaller"]
+format = ["yapf"]
 
 [build-system]
 requires = ["poetry-core"]
