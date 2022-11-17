@@ -1,4 +1,4 @@
-G21
+G21 ; I'm an example
 G90
 G83
 G17

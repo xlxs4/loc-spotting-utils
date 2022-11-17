@@ -2,7 +2,7 @@ import sys
 
 import PySide6.QtWidgets as QtWidgets
 
-from gui import GCodeUtilsGUI
+from GUI import GCodeUtilsGUI
 from IOUtils import read_config
 from paths import get_path
 

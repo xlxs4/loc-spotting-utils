@@ -5,6 +5,7 @@ import PySide6.QtWidgets as QtWidgets
 
 from eltypes import config
 from GCodeUtils import dec_coor, inc_coor, replace_coor
+from highlighter import Highlighter
 from IOUtils import lines_to_text, read_config, read_gcode, write_gcode
 from paths import get_path
 
@@ -32,6 +33,8 @@ class GCodeUtilsGUI(QtWidgets.QMainWindow):
 
         self.gcode_viewer = QtWidgets.QPlainTextEdit()
         self.gcode_viewer.setReadOnly(True)
+
+        self.highlighter = Highlighter(self.gcode_viewer.document())
 
         main_layout = QtWidgets.QVBoxLayout()
         main_layout.addWidget(self._io_group_box)
