@@ -1,5 +1,5 @@
 from pathlib import Path
-import tomllib
+from tomllib import load
 
 from eltypes import config, gcode_line, lines, str_lines
 
@@ -35,7 +35,7 @@ def write_gcode(filename: Path, lines: lines):
 
 def _read_toml(filename: Path) -> config:
     with open(filename, mode='rb') as fp:
-        config = tomllib.load(fp)
+        config = load(fp)
     return config
 
 

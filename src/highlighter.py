@@ -1,14 +1,14 @@
-import PySide6.QtCore as QtCore
-import PySide6.QtGui as QtGui
+from PySide6.QtCore import QRegularExpression
+from PySide6.QtGui import QSyntaxHighlighter, QTextCharFormat, QFont, QColorConstants
 
 
-class Highlighter(QtGui.QSyntaxHighlighter):
+class Highlighter(QSyntaxHighlighter):
     def highlightBlock(self, text: str) -> None:
-        builtin_format = QtGui.QTextCharFormat()
-        builtin_format.setFontWeight(QtGui.QFont.Bold)
-        builtin_format.setForeground(QtGui.QColorConstants.DarkMagenta)
+        builtin_format = QTextCharFormat()
+        builtin_format.setFontWeight(QFont.Bold)
+        builtin_format.setForeground(QColorConstants.DarkMagenta)
 
-        builtin_expression = QtCore.QRegularExpression(r"^[gmGM]\d{1,5}\s")
+        builtin_expression = QRegularExpression(r"^[gmGM]\d{1,5}\s")
         i = builtin_expression.globalMatch(text)
         while i.hasNext():
             match = i.next()
@@ -16,10 +16,10 @@ class Highlighter(QtGui.QSyntaxHighlighter):
                 match.capturedStart(), match.capturedLength(), builtin_format
             )
 
-        comment_format = QtGui.QTextCharFormat()
-        comment_format.setForeground(QtGui.QColorConstants.LightGray)
+        comment_format = QTextCharFormat()
+        comment_format.setForeground(QColorConstants.LightGray)
 
-        comment_expression = QtCore.QRegularExpression(r";.*")
+        comment_expression = QRegularExpression(r";.*")
         i = comment_expression.globalMatch(text)
         while i.hasNext():
             match = i.next()

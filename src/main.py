@@ -1,6 +1,6 @@
-import sys
+from sys import exit
 
-import PySide6.QtWidgets as QtWidgets
+from PySide6.QtWidgets import QApplication
 
 from GUI import GCodeUtilsGUI
 from IOUtils import read_config
@@ -10,7 +10,7 @@ if __name__ == "__main__":
     CONFIG = read_config(get_path("config"))
     WINDOW_CONFIG = CONFIG["window"]
 
-    app = QtWidgets.QApplication([])
+    app = QApplication([])
 
     window = GCodeUtilsGUI(CONFIG)
     window.resize(
@@ -19,4 +19,4 @@ if __name__ == "__main__":
     )
     window.show()
 
-    sys.exit(app.exec())
+    exit(app.exec())
