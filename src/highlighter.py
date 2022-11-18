@@ -29,6 +29,7 @@ class Highlighter(QSyntaxHighlighter):
             ("keyword", QColorConstants.DarkMagenta, True, False),
             ("operator", QColorConstants.DarkMagenta, False, False),
             ("comment", QColorConstants.LightGray, False, False),
+            ("mcode", QColorConstants.DarkMagenta, True, False),
             ("coor-num", QColorConstants.DarkMagenta, False, False),
             ("coor-val", QColorConstants.DarkMagenta, True, False),
             ("string", QColorConstants.DarkMagenta, False, False)
@@ -58,6 +59,8 @@ class Highlighter(QSyntaxHighlighter):
 
         a(r"(\\(.+\\))", "comment")
         a(r";.*\n", "comment")
+
+        a(r"[M][0-9]{1,3}", "mcode")
 
         a(r"([\\%])", "string")
 
