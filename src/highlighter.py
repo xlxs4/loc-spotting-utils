@@ -8,6 +8,11 @@ class Highlighter(QSyntaxHighlighter):
         "WHILE", "WH", "END", "IF", "THEN", "ELSE", "ENDIF"
     ]
 
+    _OPERATORS = [
+        "SIN", "COS", "TAN", "ASIN", "ACOS", "ATAN", "FIX", "FUP", "LN",
+        "ROUND", "SQRT", "FIX", "ABS", "MOD"
+    ]
+
     # Hack to be able to define a custom initializer.
     # By default you can only implement the highlightBlock virtual function
     # without messing up the way it connects to the text parent behind the scenes.
