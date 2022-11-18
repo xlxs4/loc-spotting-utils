@@ -1,10 +1,12 @@
+import re
+
 from PySide6.QtCore import QRegularExpression
 from PySide6.QtGui import QSyntaxHighlighter, QTextCharFormat, QFont, QColor, QColorConstants
 
 
 class Highlighter(QSyntaxHighlighter):
     _KEYWORDS = [
-        "GOTO", "EQ", "NE", "LT", "GT", "LE", "GE", "AND", "OR", "XOR", "DO",
+        "EQ", "NE", "LT", "GT", "LE", "GE", "AND", "OR", "XOR",
         "WHILE", "WH", "END", "IF", "THEN", "ELSE", "ENDIF"
     ]
 
@@ -43,6 +45,15 @@ class Highlighter(QSyntaxHighlighter):
                 format_.setFontItalic(True)
 
             self._formats[name] = format_
+
+    def _initialize_rules(self):
+        r = []
+
+        def a(a, b):
+            r.append((re.compile(a), b))
+
+        a("|".join([r"\b%s\b" % keyword for keyword in self._KEYWORDS]), "keyword")
+        a("|".join([r"\b%s\b" % operator for operator in self._OPERATORS]), "operator")
 
     def highlightBlock(self, text: str) -> None:
         text_length = len(text)
