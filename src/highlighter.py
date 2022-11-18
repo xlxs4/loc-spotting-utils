@@ -51,29 +51,31 @@ class Highlighter(QSyntaxHighlighter):
     def _initialize_rules(self):
         r = []
 
-        def a(a, b):
+        def _a(a, b):
             r.append((re.compile(a), b))
 
-        a("|".join([r"\b%s\b" % keyword for keyword in self._KEYWORDS]), "keyword")
+        _a("|".join([r"\b%s\b" % keyword for keyword in self._KEYWORDS]), "keyword")
 
-        a("|".join([r"\b%s\b" % operator for operator in self._OPERATORS]), "operator")
-        a(r"(\\+|\\*|\\/|\\*\\*)", "operator")
+        _a("|".join([r"\b%s\b" % operator for operator in self._OPERATORS]), "operator")
+        _a(r"(\\+|\\*|\\/|\\*\\*)", "operator")
 
-        a(r"(\\(.+\\))", "comment")
-        a(r";.*\n", "comment")
+        _a(r"(\\(.+\\))", "comment")
+        _a(r";.*\n", "comment")
 
-        a(r"[G](1)?5[4-9](.1)?\\s?(P[0-9]{1,3})?", "gcode")
-        a(r"[G]1[1-2][0-9]", "gcode")
-        a(r"[G]15\\s?(H[0-9]{1,2})?", "gcode")
-        a(r"[G][0-9]{1,3}(\\.[0-9])?", "gcode")
+        _a(r"[G](1)?5[4-9](.1)?\\s?(P[0-9]{1,3})?", "gcode")
+        _a(r"[G]1[1-2][0-9]", "gcode")
+        _a(r"[G]15\\s?(H[0-9]{1,2})?", "gcode")
+        _a(r"[G][0-9]{1,3}(\\.[0-9])?", "gcode")
 
-        a(r"[M][0-9]{1,3}", "mcode")
+        _a(r"[M][0-9]{1,3}", "mcode")
 
-        a(r"([X])\\s?(\\-?\\d*\\.?\\d+\\.?|\\-?\\.?(?=[#\\[]))", "coordinate")
-        a(r"([Y])\\s?(\\-?\\d*\\.?\\d+\\.?|\\-?\\.?(?=[#\\[]))", "coordinate")
-        a(r"([Z])\\s?(\\-?\\d*\\.?\\d+\\.?|\\-?\\.?(?=[#\\[]))", "coordinate")
+        _a(r"([X])\\s?(\\-?\\d*\\.?\\d+\\.?|\\-?\\.?(?=[#\\[]))", "coordinate")
+        _a(r"([Y])\\s?(\\-?\\d*\\.?\\d+\\.?|\\-?\\.?(?=[#\\[]))", "coordinate")
+        _a(r"([Z])\\s?(\\-?\\d*\\.?\\d+\\.?|\\-?\\.?(?=[#\\[]))", "coordinate")
 
-        a(r"([\\%])", "string")
+        _a(r"([\\%])", "string")
+
+        self._rules = tuple(r)
 
     def highlightBlock(self, text: str) -> None:
         text_length = len(text)
