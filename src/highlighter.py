@@ -6,8 +6,8 @@ from PySide6.QtGui import QSyntaxHighlighter, QTextCharFormat, QFont, QColor, QC
 
 class Highlighter(QSyntaxHighlighter):
     _KEYWORDS = [
-        "EQ", "NE", "LT", "GT", "LE", "GE", "AND", "OR", "XOR",
-        "WHILE", "WH", "END", "IF", "THEN", "ELSE", "ENDIF"
+        "EQ", "NE", "LT", "GT", "LE", "GE", "AND", "OR", "XOR", "WHILE", "WH",
+        "END", "IF", "THEN", "ELSE", "ENDIF"
     ]
 
     _OPERATORS = [
@@ -21,18 +21,19 @@ class Highlighter(QSyntaxHighlighter):
     def __init__(self, parent=None):
         QSyntaxHighlighter.__init__(self, parent)
         self._initialize_formats()
+        self._initialize_rules()
 
     def _initialize_formats(self):
         all_formats = (
             # name, color, bold, italic
             ("normal", None, False, False),
-            ("keyword", QColorConstants.DarkMagenta, True, False),
+            ("keyword", QColorConstants.Blue, True, False),
             ("operator", QColorConstants.DarkMagenta, False, False),
             ("comment", QColorConstants.LightGray, False, False),
-            ("gcode", QColorConstants.DarkMagenta, True, False),
-            ("mcode", QColorConstants.DarkMagenta, True, False),
-            ("coordinate", QColorConstants.DarkMagenta, True, False),
-            ("string", QColorConstants.DarkMagenta, False, False)
+            ("gcode", QColorConstants.DarkBlue, True, False),
+            ("mcode", QColorConstants.DarkBlue, True, False),
+            ("coordinate", QColorConstants.Blue, True, False),
+            ("string", QColorConstants.Green, False, False)
         )
 
         self._formats = {}
@@ -54,9 +55,15 @@ class Highlighter(QSyntaxHighlighter):
         def _a(a, b):
             r.append((re.compile(a), b))
 
-        _a("|".join([r"\b%s\b" % keyword for keyword in self._KEYWORDS]), "keyword")
+        _a(
+            "|".join([r"\b%s\b" % keyword for keyword in self._KEYWORDS]),
+            "keyword"
+        )
 
-        _a("|".join([r"\b%s\b" % operator for operator in self._OPERATORS]), "operator")
+        _a(
+            "|".join([r"\b%s\b" % operator for operator in self._OPERATORS]),
+            "operator"
+        )
         _a(r"(\\+|\\*|\\/|\\*\\*)", "operator")
 
         _a(r"(\\(.+\\))", "comment")
@@ -81,25 +88,7 @@ class Highlighter(QSyntaxHighlighter):
         text_length = len(text)
         self.setFormat(0, text_length, self._formats["normal"])
 
-        builtin_format = QTextCharFormat()
-        builtin_format.setFontWeight(QFont.Bold)
-        builtin_format.setForeground(QColorConstants.DarkMagenta)
-
-        builtin_expression = QRegularExpression(r"^[gmGM]\d{1,5}\s")
-        i = builtin_expression.globalMatch(text)
-        while i.hasNext():
-            match = i.next()
-            self.setFormat(
-                match.capturedStart(), match.capturedLength(), builtin_format
-            )
-
-        comment_format = QTextCharFormat()
-        comment_format.setForeground(QColorConstants.LightGray)
-
-        comment_expression = QRegularExpression(r";.*")
-        i = comment_expression.globalMatch(text)
-        while i.hasNext():
-            match = i.next()
-            self.setFormat(
-                match.capturedStart(), match.capturedLength(), comment_format
-            )
+        for regex, format_ in self._rules:
+            for m in regex.finditer(text):
+                i, length = m.start(), m.end() - m.start()
+                self.setFormat(i, length, self._formats[format_])
