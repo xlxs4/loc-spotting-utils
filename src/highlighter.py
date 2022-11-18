@@ -55,7 +55,9 @@ class Highlighter(QSyntaxHighlighter):
             r.append((re.compile(a), b))
 
         a("|".join([r"\b%s\b" % keyword for keyword in self._KEYWORDS]), "keyword")
+
         a("|".join([r"\b%s\b" % operator for operator in self._OPERATORS]), "operator")
+        a(r"(\\+|\\*|\\/|\\*\\*)", "operator")
 
         a(r"(\\(.+\\))", "comment")
         a(r";.*\n", "comment")
