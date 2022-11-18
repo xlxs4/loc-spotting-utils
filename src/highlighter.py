@@ -27,7 +27,7 @@ class Highlighter(QSyntaxHighlighter):
             # name, color, bold, italic
             ("normal", None, False, False),
             ("keyword", QColorConstants.DarkMagenta, True, False),
-            ("builtin", QColorConstants.DarkMagenta, False, False),
+            ("operator", QColorConstants.DarkMagenta, False, False),
             ("comment", QColorConstants.LightGray, False, False),
             ("coor-num", QColorConstants.DarkMagenta, False, False),
             ("coor-val", QColorConstants.DarkMagenta, True, True)
@@ -54,6 +54,9 @@ class Highlighter(QSyntaxHighlighter):
 
         a("|".join([r"\b%s\b" % keyword for keyword in self._KEYWORDS]), "keyword")
         a("|".join([r"\b%s\b" % operator for operator in self._OPERATORS]), "operator")
+
+        a(r"(\\(.+\\))", "comment")
+        a(r";.*\n", "comment")
 
     def highlightBlock(self, text: str) -> None:
         text_length = len(text)
