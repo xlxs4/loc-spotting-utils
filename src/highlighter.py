@@ -1,6 +1,5 @@
-import re
+from re import compile
 
-from PySide6.QtCore import QRegularExpression
 from PySide6.QtGui import QSyntaxHighlighter, QTextCharFormat, QFont, QColor, QColorConstants
 
 
@@ -53,7 +52,7 @@ class Highlighter(QSyntaxHighlighter):
         r = []
 
         def _a(a, b):
-            r.append((re.compile(a), b))
+            r.append((compile(a), b))
 
         _a(
             "|".join([r"\b%s\b" % keyword for keyword in self._KEYWORDS]),
