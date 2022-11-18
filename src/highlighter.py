@@ -30,7 +30,8 @@ class Highlighter(QSyntaxHighlighter):
             ("operator", QColorConstants.DarkMagenta, False, False),
             ("comment", QColorConstants.LightGray, False, False),
             ("coor-num", QColorConstants.DarkMagenta, False, False),
-            ("coor-val", QColorConstants.DarkMagenta, True, True)
+            ("coor-val", QColorConstants.DarkMagenta, True, False),
+            ("string", QColorConstants.DarkMagenta, False, False)
         )
 
         self._formats = {}
@@ -57,6 +58,8 @@ class Highlighter(QSyntaxHighlighter):
 
         a(r"(\\(.+\\))", "comment")
         a(r";.*\n", "comment")
+
+        a(r"([\\%])", "string")
 
     def highlightBlock(self, text: str) -> None:
         text_length = len(text)
