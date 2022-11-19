@@ -10,7 +10,7 @@ from PySide6.QtWidgets import (
 from eltypes import config
 from GCodeUtils import dec_coor, inc_coor, replace_coor
 from highlighter import Highlighter
-from IOUtils import lines_to_text, read_gcode, write_gcode
+from IOUtils import lines_to_text, read_gcode, text_to_lines, write_gcode
 from paths import get_path
 
 
@@ -70,7 +70,6 @@ class GCodeUtilsGUI(QMainWindow):
         plus_button.clicked.connect(self._handle_plus_button)
 
         toolbar.addWidget(plus_button)
-        toolbar.addSeparator()
 
         minus_button = QPushButton(
             QIcon(str(get_path("assets-minus"))), "", self
@@ -92,6 +91,15 @@ class GCodeUtilsGUI(QMainWindow):
         replace_button.clicked.connect(self._handle_replace_button)
 
         toolbar.addWidget(replace_button)
+        toolbar.addSeparator()
+
+        replicate_button = QPushButton(
+            QIcon(str(get_path("assets-multiply"))), "", self
+        )
+        replicate_button.setStatusTip(self.tr("Replicate selection"))
+        replicate_button.clicked.connect(self._handle_replicate_button)
+
+        toolbar.addWidget(replicate_button)
 
         self.setStatusBar(QStatusBar(self))
 
@@ -158,6 +166,18 @@ class GCodeUtilsGUI(QMainWindow):
                 ) for line in self.gcode
             ]
 
+        self._update_gcode_viewer()
+
+    @Slot()
+    def _handle_replicate_button(self):
+        cursor = self.gcode_viewer.textCursor()
+        sel_start = cursor.selectionStart()
+
+        text = self.gcode_viewer.toPlainText()
+        sel_text = cursor.selection().toPlainText().rstrip()
+        new_text = text[:sel_start] + sel_text + '\n' + text[sel_start:]
+
+        self._update_gcode_from_text(new_text)
         self._update_gcode_viewer()
 
     def _create_io_group_box(self) -> None:
@@ -246,3 +266,6 @@ class GCodeUtilsGUI(QMainWindow):
 
     def _update_gcode_viewer(self) -> None:
         self.gcode_viewer.setPlainText(lines_to_text(self.gcode))
+
+    def _update_gcode_from_text(self, text: str) -> None:
+        self.gcode = text_to_lines(text)

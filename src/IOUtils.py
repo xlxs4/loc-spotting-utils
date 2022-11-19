@@ -12,6 +12,10 @@ def lines_to_text(lines: lines) -> str:
     return '\n'.join(str(g) for g in lines)
 
 
+def text_to_lines(text: str) -> lines:
+    return [gcode_line(line.rstrip()) for line in text.split('\n')]
+
+
 def _read_line_by_line(filename: Path) -> lines:
     with open(filename) as file:
         return [gcode_line(line.rstrip()) for line in file]
