@@ -8,6 +8,7 @@ _PATHS = {
     "assets-multiply": here("assets/multiply.png"),
     "assets-plus": here("assets/plus.png"),
     "assets-replace": here("assets/replace.png"),
+    "assets-undo": here("assets/undo.png"),
     "config": here("src/config.toml")
 }
 

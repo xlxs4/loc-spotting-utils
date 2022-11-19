@@ -1,3 +1,5 @@
+from copy import deepcopy
+
 from PySide6.QtCore import QSize, Slot
 from PySide6.QtGui import QIcon
 
@@ -100,13 +102,22 @@ class GCodeUtilsGUI(QMainWindow):
         replicate_button.clicked.connect(self._handle_replicate_button)
 
         toolbar.addWidget(replicate_button)
+        toolbar.addSeparator()
+
+        undo_button = QPushButton(QIcon(str(get_path("assets-undo"))), "", self)
+        undo_button.setStatusTip(self.tr("Undo last G-Code operation"))
+        undo_button.clicked.connect(self._handle_undo_button)
+
+        toolbar.addWidget(undo_button)
 
         self.setStatusBar(QStatusBar(self))
 
         self.gcode = None
+        self.previous_gcode = None
 
     @Slot()
     def _handle_plus_button(self):
+        self._save_last_gcode()
         if self._specific_val_checkbox.isChecked():
             self.gcode = [
                 inc_coor(
@@ -128,6 +139,7 @@ class GCodeUtilsGUI(QMainWindow):
 
     @Slot()
     def _handle_minus_button(self):
+        self._save_last_gcode()
         if self._specific_val_checkbox.isChecked():
             self.gcode = [
                 dec_coor(
@@ -149,6 +161,7 @@ class GCodeUtilsGUI(QMainWindow):
 
     @Slot()
     def _handle_replace_button(self):
+        self._save_last_gcode()
         if self._specific_val_checkbox.isChecked():
             self.gcode = [
                 replace_coor(
@@ -170,6 +183,7 @@ class GCodeUtilsGUI(QMainWindow):
 
     @Slot()
     def _handle_replicate_button(self):
+        self._save_last_gcode()
         cursor = self.gcode_viewer.textCursor()
         sel_start = cursor.selectionStart()
 
@@ -183,6 +197,12 @@ class GCodeUtilsGUI(QMainWindow):
 
         self._update_gcode_from_text(new_text)
         self._update_gcode_viewer()
+
+    @Slot()
+    def _handle_undo_button(self) -> None:
+        if self.previous_gcode is not None:
+            self.gcode = self.previous_gcode
+            self._update_gcode_viewer()
 
     def _create_io_group_box(self) -> None:
         self._io_group_box = QGroupBox(self.tr("IO"))
@@ -273,3 +293,6 @@ class GCodeUtilsGUI(QMainWindow):
 
     def _update_gcode_from_text(self, text: str) -> None:
         self.gcode = text_to_lines(text)
+
+    def _save_last_gcode(self) -> None:
+        self.previous_gcode = deepcopy(self.gcode)
