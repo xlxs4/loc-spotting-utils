@@ -1,3 +1,4 @@
+from collections import deque
 from copy import deepcopy
 
 from PySide6.QtCore import QSize, Slot
@@ -113,7 +114,7 @@ class GCodeUtilsGUI(QMainWindow):
         self.setStatusBar(QStatusBar(self))
 
         self.gcode = None
-        self.previous_gcode = None
+        self.previous_gcodes = deque()
 
     @Slot()
     def _handle_plus_button(self):
@@ -200,8 +201,8 @@ class GCodeUtilsGUI(QMainWindow):
 
     @Slot()
     def _handle_undo_button(self) -> None:
-        if self.previous_gcode is not None:
-            self.gcode = self.previous_gcode
+        if self.previous_gcodes:
+            self.gcode = self.previous_gcodes.pop()
             self._update_gcode_viewer()
 
     def _create_io_group_box(self) -> None:
@@ -295,4 +296,4 @@ class GCodeUtilsGUI(QMainWindow):
         self.gcode = text_to_lines(text)
 
     def _save_last_gcode(self) -> None:
-        self.previous_gcode = deepcopy(self.gcode)
+        self.previous_gcodes.append(deepcopy(self.gcode))
