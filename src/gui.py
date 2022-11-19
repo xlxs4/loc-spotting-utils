@@ -174,8 +174,12 @@ class GCodeUtilsGUI(QMainWindow):
         sel_start = cursor.selectionStart()
 
         text = self.gcode_viewer.toPlainText()
-        sel_text = cursor.selection().toPlainText().rstrip()
-        new_text = text[:sel_start] + sel_text + '\n' + text[sel_start:]
+        sel_text = cursor.selection().toPlainText().rstrip() + '\n'
+
+        val = self._new_coor_val.value()
+        times = val if val > 0 else 1
+
+        new_text = text[:sel_start] + sel_text * times + text[sel_start:]
 
         self._update_gcode_from_text(new_text)
         self._update_gcode_viewer()
