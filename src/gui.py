@@ -21,8 +21,8 @@ class GCodeUtilsGUI(QMainWindow):
     def __init__(self, config: config):
         super().__init__()
 
-        ICON_CONFIG = config["icon"]
-        COOR_CONFIG = config["coordinate"]
+        ICON_CONFIG = config.icon
+        COOR_CONFIG = config.coordinate
 
         self._init_ui(COOR_CONFIG, ICON_CONFIG)
 

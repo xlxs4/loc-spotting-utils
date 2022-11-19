@@ -8,7 +8,10 @@ from paths import get_path
 
 if __name__ == "__main__":
     CONFIG = read_config(get_path("config"))
-    WINDOW_CONFIG = CONFIG["window"]
+    if not CONFIG:
+        exit(1)
+
+    WINDOW_CONFIG = CONFIG.window
 
     app = QApplication([])
 
