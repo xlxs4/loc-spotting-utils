@@ -43,7 +43,9 @@ jobs:
           path: ${{ matrix.pip-cache-path }}
           key: venv-${{ runner.os }}-${{ steps.setup-python.outputs.python-version }}-${{ hashFiles('**/poetry.lock') }}
       - name: Install dependencies
-        run: poetry install --no-interaction --no-root -E build
+        run: poetry install --no-interaction --no-root -E build -E format
+      - name: Check formatting
+        run: yapf -drp --no-local-style --style "facebook" src/
       - name: Build for ${{ matrix.os }}
         run: |
           source $VENV
