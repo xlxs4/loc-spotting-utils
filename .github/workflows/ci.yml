@@ -52,9 +52,15 @@ jobs:
         run: |
           source $VENV
           pyi-makespec src/main.py
-          sed -i '' -e '2 r add-files-to-spec' main.spec
-          sed -i '' -e 's/datas=\[]/datas=added_files/' main.spec
+          if [ "$RUNNER_OS" == "macOS" ]; then
+            sed -i '' -e '2 r add-files-to-spec' main.spec
+            sed -i '' -e 's/datas=\[]/datas=added_files/' main.spec
+          else
+            sed -i '2 r add-files-to-spec' main.spec
+            sed -i 's/datas=\[]/datas=added_files/' main.spec
+          fi
           pyinstaller main.spec
+        shell: bash
       - name: Archive binary artifacts
         uses: actions/upload-artifact@v3
         with:
