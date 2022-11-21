@@ -17,10 +17,12 @@ pyprojroot = "^0.2.0"
 yapf = { version = "^0.32.0", optional = true }
 toml = { version = "^0.10.2", optional = true }
 pydantic = "^1.10.2"
+pytest = { version = "^7.2.0", optional = true }
 
 [tool.poetry.extras]
 build = ["pyinstaller"]
 format = ["yapf", "toml"]
+test = ["pytest"]
 
 [build-system]
 requires = ["poetry-core"]
