@@ -3,15 +3,15 @@ from pathlib import Path
 from pyprojroot import here
 
 _PATHS = {
-    "assets": here("assets/"),
-    "assets-minus": here("assets/minus.png"),
-    "assets-multiply": here("assets/multiply.png"),
-    "assets-plus": here("assets/plus.png"),
-    "assets-replace": here("assets/replace.png"),
-    "assets-undo": here("assets/undo.png"),
-    "config": here("src/config.toml")
+    "assets": "assets/",
+    "assets-minus": "assets/minus.png",
+    "assets-multiply": "assets/multiply.png",
+    "assets-plus": "assets/plus.png",
+    "assets-replace": "assets/replace.png",
+    "assets-undo": "assets/undo.png",
+    "config": "src/config.toml"
 }
 
 
-def get_path(name: str) -> Path:
-    return _PATHS[name]
+def get_path(name: str, relative: bool) -> Path:
+    return here(_PATHS[name]) if not relative else _PATHS[name]

@@ -7,7 +7,8 @@ from IOUtils import read_config
 from paths import get_path
 
 if __name__ == "__main__":
-    CONFIG = read_config(get_path("config"))
+    relative_paths = True
+    CONFIG = read_config(get_path("config", relative_paths))
     if not CONFIG:
         exit(1)
 
@@ -15,7 +16,7 @@ if __name__ == "__main__":
 
     app = QApplication([])
 
-    window = GCodeUtilsGUI(CONFIG)
+    window = GCodeUtilsGUI(CONFIG, relative_paths)
     window.resize(
         WINDOW_CONFIG["dimension"]["width"],
         WINDOW_CONFIG["dimension"]["height"]

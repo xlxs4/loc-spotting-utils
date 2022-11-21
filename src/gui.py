@@ -18,15 +18,17 @@ from paths import get_path
 
 
 class GCodeUtilsGUI(QMainWindow):
-    def __init__(self, config: config):
+    def __init__(self, config: config, relative_paths: bool):
         super().__init__()
 
         ICON_CONFIG = config.icon
         COOR_CONFIG = config.coordinate
 
-        self._init_ui(COOR_CONFIG, ICON_CONFIG)
+        self._init_ui(COOR_CONFIG, ICON_CONFIG, relative_paths)
 
-    def _init_ui(self, coor_config: config, icon_config: config) -> None:
+    def _init_ui(
+        self, coor_config: config, icon_config: config, relative_paths: bool
+    ) -> None:
         selector_threshold = coor_config["threshold"]
 
         self._create_io_group_box()
@@ -66,7 +68,9 @@ class GCodeUtilsGUI(QMainWindow):
         )
         self.addToolBar(toolbar)
 
-        plus_button = QPushButton(QIcon(str(get_path("assets-plus"))), "", self)
+        plus_button = QPushButton(
+            QIcon(str(get_path("assets-plus", relative_paths))), "", self
+        )
         plus_button.setStatusTip(
             self.tr("Increase X/Y/Z G-Code coordinates by value")
         )
@@ -75,7 +79,7 @@ class GCodeUtilsGUI(QMainWindow):
         toolbar.addWidget(plus_button)
 
         minus_button = QPushButton(
-            QIcon(str(get_path("assets-minus"))), "", self
+            QIcon(str(get_path("assets-minus", relative_paths))), "", self
         )
         minus_button.setStatusTip(
             self.tr("Decrease X/Y/Z G-Code coordinates by value")
@@ -86,7 +90,7 @@ class GCodeUtilsGUI(QMainWindow):
         toolbar.addSeparator()
 
         replace_button = QPushButton(
-            QIcon(str(get_path("assets-replace"))), "", self
+            QIcon(str(get_path("assets-replace", relative_paths))), "", self
         )
         replace_button.setStatusTip(
             self.tr("Replace X/Y/Z G-Code coordinates with value")
@@ -97,7 +101,7 @@ class GCodeUtilsGUI(QMainWindow):
         toolbar.addSeparator()
 
         replicate_button = QPushButton(
-            QIcon(str(get_path("assets-multiply"))), "", self
+            QIcon(str(get_path("assets-multiply", relative_paths))), "", self
         )
         replicate_button.setStatusTip(self.tr("Replicate selection"))
         replicate_button.clicked.connect(self._handle_replicate_button)
@@ -105,7 +109,9 @@ class GCodeUtilsGUI(QMainWindow):
         toolbar.addWidget(replicate_button)
         toolbar.addSeparator()
 
-        undo_button = QPushButton(QIcon(str(get_path("assets-undo"))), "", self)
+        undo_button = QPushButton(
+            QIcon(str(get_path("assets-undo", relative_paths))), "", self
+        )
         undo_button.setStatusTip(self.tr("Undo last G-Code operation"))
         undo_button.clicked.connect(self._handle_undo_button)
 

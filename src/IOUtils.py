@@ -1,8 +1,6 @@
 from pathlib import Path
 from tomllib import load
 
-from pydantic import ValidationError
-
 from config_model import Config
 from eltypes import config, config_model, gcode_line, lines, str_lines
 
