@@ -25,7 +25,6 @@ A repository to host code and a bunch of other stuff. These have to do with our 
     - [Assets](#assets)
     - [Source](#source)
     - [Rest](#rest)
-  - [Miscellaneous](#miscellaneous)
 
 </details>
 
@@ -159,12 +158,6 @@ If the job terminates successfully, the bundle folder for each OS is uploaded as
 
 #### Assets
 
-#### Source
-
-#### Rest
-
-### Miscellaneous
-
 Icons:
 
 - <a target="_blank" href="https://icons8.com/icon/FMj27qvOMorG/replace">Replace</a> icon by <a target="_blank" href="https://icons8.com">Icons8</a>
@@ -172,3 +165,7 @@ Icons:
 - <a target="_blank" href="https://icons8.com/icon/occUe06FpCMr/subtract">Subtract</a> icon by <a target="_blank" href="https://icons8.com">Icons8</a>
 - <a target="_blank" href="https://icons8.com/icon/2VYfDlfknSJE/multiply">Multiply</a> icon by <a target="_blank" href="https://icons8.com">Icons8</a>
 - <a target="_blank" href="https://icons8.com/icon/e1AG2cMLWdUG/return">Return</a> icon by <a target="_blank" href="https://icons8.com">Icons8</a>
+
+#### Source
+
+#### Rest
