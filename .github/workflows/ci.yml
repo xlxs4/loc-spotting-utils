@@ -54,7 +54,7 @@ jobs:
           pyi-makespec src/main.py
           sed -i '2 r add-files-to-spec' main.spec
           sed -i 's/datas=\[]/datas=added_files/' main.spec
-          pyinstaller ${{ matrix.pyinstaller-spec-path }}
+          pyinstaller main.spec
       - name: Archive binary artifacts
         uses: actions/upload-artifact@v3
         with:
