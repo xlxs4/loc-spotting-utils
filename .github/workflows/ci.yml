@@ -17,6 +17,12 @@ jobs:
             os: macos-latest
           - pip-cache-path: ~\appdata\local\pip\cache
             os: windows-latest
+          - pyinstaller-spec-path: main-linux.spec
+            os: ubuntu-latest
+          - pyinstaller-spec-path: main-mac.spec
+            os: macos-latest
+          - pyinstaller-spec-path: main-win.spec
+            os: windows-latest
     defaults:
       run:
         shell: bash
@@ -51,7 +57,7 @@ jobs:
       - name: Build for ${{ matrix.os }}
         run: |
           source $VENV
-          pyinstaller main.spec
+          pyinstaller ${{ matrix.pyinstaller-spec-path }}
       - name: Archive binary artifacts
         uses: actions/upload-artifact@v3
         with:
