@@ -1,0 +1,4 @@
+added_files = [
+    ('assets/', 'assets'),
+    ('src/config.toml', 'src/')
+]
