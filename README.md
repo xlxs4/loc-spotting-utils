@@ -71,7 +71,91 @@ pyproject.toml
 
 #### CI
 
+<details>
+<summary>Click to expand</summary>
 
+All [CI magic](https://github.com/xlxs4/loc-spotting-utils/actions/workflows/ci.yml) happens using [GitHub Actions](https://docs.github.com/en/actions).
+The related configuration is all located within `.github/workflows/ci.yml`:
+
+```yaml
+name: CI
+run-name: ${{ github.actor }} is running 🚀
+on: [push] # Triggered by push.
+
+jobs:
+  ci:
+    strategy:
+      fail-fast: false # Don't fail all jobs if a single job fails.
+      matrix:
+        python-version: ["3.11"]
+        poetry-version: ["1.2.2"] # Poetry is used for project/dependency management.
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        include: # Where pip stores its cache is OS-dependent.
+          - pip-cache-path: ~/.cache
+            os: ubuntu-latest
+          - pip-cache-path: ~/.cache
+            os: macos-latest
+          - pip-cache-path: ~\appdata\local\pip\cache
+            os: windows-latest
+    defaults:
+      run:
+        shell: bash # For sane consistent scripting throughout.
+    runs-on: ${{ matrix.os }} # For each OS:
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v3
+      - name: Setup Python
+        id: setup-python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install Poetry
+        uses: snok/install-poetry@v1
+        with:
+          version: ${{ matrix.poetry-version }}
+          virtualenvs-create: true
+          virtualenvs-in-project: true # Otherwise the venv will be the same across all OSes.
+          installer-parallel: true
+      - name: Load cached venv
+        id: cached-pip-wheels
+        uses: actions/cache@v3
+        with:
+          path: ${{ matrix.pip-cache-path }}
+          key: venv-${{ runner.os }}-${{ steps.setup-python.outputs.python-version }}-${{ hashFiles('**/poetry.lock') }}
+      - name: Install dependencies
+        run: poetry install --no-interaction --no-root -E build -E format # https://github.com/python-poetry/poetry/issues/1227
+      - name: Check formatting
+        run: |
+          source $VENV
+          yapf -drp --no-local-style --style "facebook" src/
+      - name: Build for ${{ matrix.os }}
+        run: | # https://stackoverflow.com/questions/19456518/error-when-using-sed-with-find-command-on-os-x-invalid-command-code
+          source $VENV
+          pyi-makespec src/main.py
+          if [ "$RUNNER_OS" == "macOS" ]; then
+            sed -i '' -e '2 r add-files-to-spec' main.spec
+            sed -i '' -e 's/datas=\[]/datas=added_files/' main.spec
+          else
+            sed -i '2 r add-files-to-spec' main.spec
+            sed -i 's/datas=\[]/datas=added_files/' main.spec
+          fi
+          pyinstaller main.spec
+      - name: Archive binary artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{ matrix.os }}-bundle
+          path: dist
+```
+
+</details>
+
+On each push, the application is bundled into a single folder containing an executable, for each OS.
+This happens using [`pyinstaller`](https://www.pyinstaller.org/).
+First there's a formatting check using [`yapf`](https://github.com/google/yapf).
+Then, the application is built.
+`pytest` is included as an extra optional dependency to add unit test support in the future.
+Everything is cached when possible.
+If the job terminates successfully, the bundle folder for each OS is uploaded as an [artifact](https://github.com/xlxs4/loc-spotting-utils/actions/runs/3518601483) that the user can download, instead of having to run `pyinstaller` locally, or having to install `python` and the project dependencies locally through `poetry`.
 
 #### Assets
 

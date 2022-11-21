@@ -1,16 +1,16 @@
 name: CI
 run-name: ${{ github.actor }} is running 🚀
-on: [push]
+on: [push] # Triggered by push.
 
 jobs:
   ci:
     strategy:
-      fail-fast: false
+      fail-fast: false # Don't fail all jobs if a single job fails.
       matrix:
         python-version: ["3.11"]
-        poetry-version: ["1.2.2"]
+        poetry-version: ["1.2.2"] # Poetry is used for project/dependency management.
         os: [ubuntu-latest, macos-latest, windows-latest]
-        include:
+        include: # Where pip stores its cache is OS-dependent.
           - pip-cache-path: ~/.cache
             os: ubuntu-latest
           - pip-cache-path: ~/.cache
@@ -19,8 +19,8 @@ jobs:
             os: windows-latest
     defaults:
       run:
-        shell: bash
-    runs-on: ${{ matrix.os }}
+        shell: bash # For sane consistent scripting throughout.
+    runs-on: ${{ matrix.os }} # For each OS:
     steps:
       - name: Check out repository
         uses: actions/checkout@v3
@@ -34,7 +34,7 @@ jobs:
         with:
           version: ${{ matrix.poetry-version }}
           virtualenvs-create: true
-          virtualenvs-in-project: true
+          virtualenvs-in-project: true # Otherwise the venv will be the same across all OSes.
           installer-parallel: true
       - name: Load cached venv
         id: cached-pip-wheels
@@ -43,13 +43,13 @@ jobs:
           path: ${{ matrix.pip-cache-path }}
           key: venv-${{ runner.os }}-${{ steps.setup-python.outputs.python-version }}-${{ hashFiles('**/poetry.lock') }}
       - name: Install dependencies
-        run: poetry install --no-interaction --no-root -E build -E format
+        run: poetry install --no-interaction --no-root -E build -E format # https://github.com/python-poetry/poetry/issues/1227
       - name: Check formatting
         run: |
           source $VENV
           yapf -drp --no-local-style --style "facebook" src/
       - name: Build for ${{ matrix.os }}
-        run: |
+        run: | # https://stackoverflow.com/questions/19456518/error-when-using-sed-with-find-command-on-os-x-invalid-command-code
           source $VENV
           pyi-makespec src/main.py
           if [ "$RUNNER_OS" == "macOS" ]; then
@@ -60,7 +60,6 @@ jobs:
             sed -i 's/datas=\[]/datas=added_files/' main.spec
           fi
           pyinstaller main.spec
-        shell: bash
       - name: Archive binary artifacts
         uses: actions/upload-artifact@v3
         with:
