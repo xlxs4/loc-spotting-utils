@@ -50,6 +50,7 @@ jobs:
           yapf -drp --no-local-style --style "facebook" src/
       - name: Build for ${{ matrix.os }}
         run: |
+          source $VENV
           pyinstaller main.spec
       - name: Archive binary artifacts
         uses: actions/upload-artifact@v3
