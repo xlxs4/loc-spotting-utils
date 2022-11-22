@@ -914,3 +914,57 @@ Finally, `config.toml`, the (editable) configuration file:
 </details>
 
 #### Dependencies
+
+Project and dependency management happens through `poetry`:
+
+<details>
+<summary>Click to expand</summary>
+
+```toml
+[tool.poetry]
+name = "loc-spotting-utils"
+version = "0.1.0"
+description = "Python utilties to assist in DIY microarray spotting using a 3D printer"
+authors = ["Orestis Ousoultzoglou <orousoultzoglou@gmail.com>"]
+license = "MIT"
+readme = "README.md"
+packages = [{include = "loc_spotting_utils"}]
+
+[tool.poetry.dependencies]
+python = "~3.11"
+pyside6 = "^6.4.0.1"
+
+pyinstaller = { version = "^5.6.2", optional = true }
+pygcode = "^0.2.1"
+pyprojroot = "^0.2.0"
+yapf = { version = "^0.32.0", optional = true }
+toml = { version = "^0.10.2", optional = true }
+pydantic = "^1.10.2"
+pytest = { version = "^7.2.0", optional = true }
+
+[tool.poetry.extras]
+build = ["pyinstaller"]
+format = ["yapf", "toml"]
+test = ["pytest"]
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+```
+
+</details>
+
+- [`pyside6`](https://pypi.org/project/PySide6/): `PySide6` is the official Python module from the Qt for Python project, which provides access to the complete Qt 6.0+ framework. Used for the GUI
+- [`pygcode`](https://pypi.org/project/pygcode/): Currently in development, `pygcode` is a low-level GCode interpreter for python. Used for G-Code parsing
+- [`pyprojroot`](https://pypi.org/project/pyprojroot/): Find relative paths from a project root directory. Used for making my life better during development
+- [`pydantic`](https://pypi.org/project/pydantic/): Data validation and settings management using Python type hints. Used for validating the configuration TOML
+
+Some [clusters of optional dependencies](https://python-poetry.org/docs/pyproject/#extras) have also been added.
+These aren't required for the application to run.
+These clusters are:
+
+- `build`: [`pyinstaller`](https://pypi.org/project/pyinstaller/): PyInstaller bundles a Python application and all its dependencies into a single package. Used for bundling the application into a single folder with an executable
+- `format`:
+  - [`yapf`](https://pypi.org/project/yapf/): A formatter for Python files. Used for, well, you guessed it. Also used in CI
+  - [`toml`](https://pypi.org/project/toml/): A Python library for parsing and creating TOML. *Not* used for parsing the config file. It's required from `yapf`
+- `test`: [`pytest`](https://pypi.org/project/pytest/): The `pytest` framework makes it easy to write small tests, yet scales to support complex functional testing for applications and libraries. Can be used to set up unit testing some time in the future
