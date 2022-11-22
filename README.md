@@ -33,7 +33,7 @@ A repository to host code and a bunch of other stuff. These have to do with our 
 
 ### Description
 
-TODO:
+A cross-platform GUI bundled as an executable to help quickly adjust G-Code files that contain spotting instructions.
 
 ### File Structure
 
