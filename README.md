@@ -24,7 +24,7 @@ A repository to host code and a bunch of other stuff. These have to do with our 
     - [CI](#ci)
     - [Assets](#assets)
     - [Source](#source)
-    - [Rest](#rest)
+    - [Dependencies](#dependencies)
 
 </details>
 
@@ -696,4 +696,73 @@ def read_config(filename: Path) -> config_model:
 
 ---
 
-#### Rest
+`eltypes.py` is for creating custom types for better [type hints](https://docs.python.org/3/library/typing.html), as well as grouping all types in a single source file:
+
+<details>
+<summary>Click to expand</summary>
+
+```python
+from types import FunctionType
+
+from pygcode import Line
+
+from config_model import Config
+
+config = dict
+config_model = Config
+
+gcode_line = Line
+
+lines = list[gcode_line]
+str_lines = list[str]
+
+operator = FunctionType
+```
+
+</details>
+
+---
+
+Respectively, `paths.py` holds all (assets & config) paths:
+
+<details>
+<summary>Click to expand</summary>
+
+```python
+from pathlib import Path
+
+from pyprojroot import here
+
+_PATHS = {
+    "assets": "assets/",
+    "assets-minus": "assets/minus.png",
+    "assets-multiply": "assets/multiply.png",
+    "assets-plus": "assets/plus.png",
+    "assets-replace": "assets/replace.png",
+    "assets-undo": "assets/undo.png",
+    "config": "src/config.toml"
+}
+
+
+def get_path(name: str, relative: bool) -> Path:
+    return here(_PATHS[name]) if not relative else _PATHS[name]
+```
+
+</details>
+
+[`pathlib`](https://docs.python.org/3/library/pathlib.html) is used for sane path handling across OSes.
+[`pyprojroot`](https://github.com/chendaniely/pyprojroot) is used to locate the project root to better handle absolute paths.
+It's akin to [`rprojroot`](https://github.com/r-lib/rprojroot) or [`here`](https://here.r-lib.org/).
+*Note*: absolute paths can't be used to build the application, since we want it to be distributable and able to work regardless of the directory it's located in; therefore relative paths are used instead.
+However, absolute paths with `pyprojroot` can help a lot during development - refer to `relative_paths = True` in `main.py`.
+
+---
+
+Lastly, `operators.py` holds a custom operator used in `GCodeUtils.py`:
+
+```python
+def replace_op(a, b):
+    return b
+```
+
+#### Dependencies
