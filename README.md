@@ -35,6 +35,8 @@ A repository to host code and a bunch of other stuff. These have to do with our 
 
 A cross-platform GUI bundled as an executable to help quickly adjust G-Code files that contain spotting instructions.
 
+![Example screenshot](/readme-assets/screenshot.png)
+
 ### File Structure
 
 <details>
