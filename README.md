@@ -565,4 +565,135 @@ Additionally, instead of applying an operations to *every* `X|Y|Z` coordinate va
 
 Applying each of these operations can be reversed through the **Undo** button.
 
+---
+
+`GCodeUtils.py` is where the G-Code parsing takes place:
+
+<details>
+<summary>Click to expand</summary>
+
+```python
+from operator import add, sub
+from typing import Union
+
+from pygcode import GCodeLinearMove
+
+from eltypes import gcode_line, operator
+from operators import replace_op
+
+
+def _apply_op_to_coor(
+    line: gcode_line, coor: str, op: operator, val: int,
+    only_for_val: Union[int, None]
+) -> gcode_line:
+    gcodes = line.block.gcodes
+    for gcode in gcodes:
+        if type(gcode) is GCodeLinearMove:
+            current_coor = getattr(gcode, coor)
+            if current_coor is not None:
+                if only_for_val is not None:
+                    if current_coor == only_for_val:
+                        setattr(gcode, coor, op(current_coor, val))
+                else:
+                    setattr(gcode, coor, op(current_coor, val))
+
+    return line
+
+
+def inc_coor(
+    line: gcode_line,
+    coor: str,
+    val: int,
+    only_for_val: int = None
+) -> gcode_line:
+    return _apply_op_to_coor(line, coor, add, val, only_for_val)
+
+
+def dec_coor(
+    line: gcode_line,
+    coor: str,
+    val: int,
+    only_for_val: int = None
+) -> gcode_line:
+    return _apply_op_to_coor(line, coor, sub, val, only_for_val)
+
+
+def replace_coor(
+    line: gcode_line,
+    coor: str,
+    val: int,
+    only_for_val: int = None
+) -> gcode_line:
+    return _apply_op_to_coor(line, coor, replace_op, val, only_for_val)
+```
+
+</details>
+
+Note that replicating doesn't have to do with G-Code, just with general text.
+
+---
+
+`IOUtils.py`, respectively, is where the logic to read from/write to G-Code, read config and convert from G-Code to text and back for displaying it in the GUI:
+
+<details>
+<summary>Click to expand</summary>
+
+```python
+from pathlib import Path
+from tomllib import load
+
+from config_model import Config
+from eltypes import config, config_model, gcode_line, lines, str_lines
+
+
+def _lines_to_str_lines(lines: lines) -> str_lines:
+    return [str(line) for line in lines]
+
+
+def lines_to_text(lines: lines) -> str:
+    return '\n'.join(str(g) for g in lines)
+
+
+def text_to_lines(text: str) -> lines:
+    return [gcode_line(line.rstrip()) for line in text.split('\n')]
+
+
+def _read_line_by_line(filename: Path) -> lines:
+    with open(filename) as file:
+        return [gcode_line(line.rstrip()) for line in file]
+
+
+def read_gcode(filename: Path) -> lines:
+    return _read_line_by_line(filename)
+
+
+def _write_line_by_line(filename: Path, lines: lines):
+    lines = _lines_to_str_lines(lines)
+    with open(filename, 'w+') as file:
+        for line in lines[:-1]:
+            file.write(line + '\n')
+        file.write(lines[-1])
+
+
+def write_gcode(filename: Path, lines: lines):
+    _write_line_by_line(filename, lines)
+
+
+def _read_toml(filename: Path) -> config:
+    with open(filename, mode='rb') as fp:
+        config = load(fp)
+    return config
+
+
+def read_config(filename: Path) -> config_model:
+    conf_from_file = _read_toml(filename)
+    return Config.parse_obj(conf_from_file)
+```
+
+</details>
+
+[`tomllib`](https://docs.python.org/3/library/tomllib.html) is used for loading the TOML file.
+
+---
+
 #### Rest
