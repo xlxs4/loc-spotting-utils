@@ -872,4 +872,45 @@ class Highlighter(QSyntaxHighlighter):
 
 ---
 
+`config_model.py` holds the `pydantic` `BaseModel` representation of the application configuration:
+
+```python
+from pydantic import BaseModel
+
+
+class Config(BaseModel):
+    icon: dict[str, dict[str, int]]
+    window: dict[str, dict[str, int]]
+    coordinate: dict[str, dict[str, int]]
+```
+
+---
+
+Finally, `config.toml`, the (editable) configuration file:
+
+<details>
+<summary>Click to expand</summary>
+
+```toml
+[icon]
+
+    [icon.dimension]
+    width = 25
+    height = 25
+
+[window]
+
+    [window.dimension]
+    width = 600
+    height = 700
+
+[coordinate]
+
+    [coordinate.threshold]
+    min = 0
+    max = 300
+```
+
+</details>
+
 #### Dependencies
