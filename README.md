@@ -25,6 +25,7 @@ A repository to host code and a bunch of other stuff. These have to do with our 
     - [Assets](#assets)
     - [Source](#source)
     - [Dependencies](#dependencies)
+    - [Rest](#rest)
 
 </details>
 
@@ -968,3 +969,8 @@ These clusters are:
   - [`yapf`](https://pypi.org/project/yapf/): A formatter for Python files. Used for, well, you guessed it. Also used in CI
   - [`toml`](https://pypi.org/project/toml/): A Python library for parsing and creating TOML. *Not* used for parsing the config file. It's required from `yapf`
 - `test`: [`pytest`](https://pypi.org/project/pytest/): The `pytest` framework makes it easy to write small tests, yet scales to support complex functional testing for applications and libraries. Can be used to set up unit testing some time in the future
+
+#### Rest
+
+- `add-files-to-spec` is a clever hack to add [the data files to be bundled](https://pyinstaller.org/en/stable/spec-files.html) to the `pyinstaller` `spec` generated files through `sed`
+- `.editorconfig` is [cool](https://editorconfig.org/)
