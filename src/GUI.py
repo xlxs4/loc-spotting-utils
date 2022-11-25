@@ -6,7 +6,7 @@ from PySide6.QtGui import QIcon
 
 from PySide6.QtWidgets import (
     QMainWindow, QLabel, QPlainTextEdit, QVBoxLayout, QWidget, QToolBar,
-    QPushButton, QStatusBar, QGroupBox, QHBoxLayout, QComboBox, QSpinBox,
+    QPushButton, QStatusBar, QGroupBox, QHBoxLayout, QComboBox, QDoubleSpinBox,
     QFrame, QCheckBox, QFileDialog
 )
 
@@ -235,7 +235,7 @@ class GCodeUtilsGUI(QMainWindow):
         self._coor_dropdown = QComboBox()
         self._coor_dropdown.addItems(['X', 'Y', 'Z'])
 
-        self._new_coor_val = QSpinBox()
+        self._new_coor_val = QDoubleSpinBox()
         self._new_coor_val.setRange(
             selector_threshold["min"], selector_threshold["max"]
         )
@@ -257,7 +257,7 @@ class GCodeUtilsGUI(QMainWindow):
 
         self._specific_val_checkbox = QCheckBox(self.tr("Specific value only"))
 
-        self._specific_val_selector = QSpinBox()
+        self._specific_val_selector = QDoubleSpinBox()
         self._specific_val_selector.setRange(
             selector_threshold["min"], selector_threshold["max"]
         )
