@@ -35,6 +35,7 @@ class GCodeUtilsGUI(QMainWindow):
         self._create_coor_group_box(selector_threshold)
         self._create_coor_frame_separator()
         self._create_new_val_group_box(selector_threshold)
+        self._create_additive_group_box()
 
         self.selected_gcode_path = QLabel(self.tr("Selected G-Code: "))
 
@@ -50,6 +51,7 @@ class GCodeUtilsGUI(QMainWindow):
         main_layout.addWidget(self._coor_group_box)
         main_layout.addWidget(self._frame_separator)
         main_layout.addWidget(self._new_val_group_box)
+        main_layout.addWidget(self._additive_group_box)
         self.setLayout(main_layout)
 
         self.setWindowTitle(self.tr("Lab-On-a-Chip Spotting Utilties"))
@@ -123,16 +125,24 @@ class GCodeUtilsGUI(QMainWindow):
         self.previous_gcodes = deque()
 
     def _apply_coor_operator(self, op: operator) -> None:
-        coor = self._coor_dropdown.currentText()
-        new_val = self._new_coor_val.value()
-        if self._specific_val_checkbox.isChecked():
-            specific_val = self._specific_val_selector.value()
-            self.gcode = [
-                op(line, coor, new_val, only_for_val=specific_val)
-                for line in self.gcode
-            ]
-        else:
-            self.gcode = [op(line, coor, new_val) for line in self.gcode]
+        if self.gcode is not None:
+            coor = self._coor_dropdown.currentText()
+            new_val = self._new_coor_val.value()
+            additive = self._additive_checkbox.isChecked()
+            specific_val = self._specific_val_selector.value(
+            ) if self._specific_val_checkbox.isChecked() else None
+
+            new = []
+            times = 1
+            for line in self.gcode:
+                new_line, found = op(
+                    line, coor, new_val * times, additive, specific_val
+                )
+                if found:
+                    times += 1
+                new.append(new_line)
+
+            self.gcode = new
 
     @Slot()
     def _handle_plus_button(self):
@@ -231,6 +241,20 @@ class GCodeUtilsGUI(QMainWindow):
 
         self._new_val_group_box.setLayout(layout)
 
+    def _create_additive_group_box(self) -> None:
+        self._additive_group_box = QGroupBox(
+            self.tr("Apply coordinate operations in additive manner")
+        )
+        layout = QHBoxLayout()
+
+        self._additive_checkbox = QCheckBox(
+            self.tr("Additive operation application")
+        )
+
+        layout.addWidget(self._additive_checkbox)
+
+        self._additive_group_box.setLayout(layout)
+
     def _browse_gcode(self) -> None:
         dialog = QFileDialog(self)
         dialog.setFileMode(QFileDialog.ExistingFile)
@@ -260,10 +284,12 @@ class GCodeUtilsGUI(QMainWindow):
             write_gcode(gcode_filename, self.gcode)
 
     def _update_gcode_viewer(self) -> None:
-        self.gcode_viewer.setPlainText(lines_to_text(self.gcode))
+        if self.gcode is not None:
+            self.gcode_viewer.setPlainText(lines_to_text(self.gcode))
 
     def _update_gcode_from_text(self, text: str) -> None:
         self.gcode = text_to_lines(text)
 
     def _save_last_gcode(self) -> None:
-        self.previous_gcodes.append(deepcopy(self.gcode))
+        if self.gcode is not None:
+            self.previous_gcodes.append(deepcopy(self.gcode))
