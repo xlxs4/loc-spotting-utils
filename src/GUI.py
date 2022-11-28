@@ -123,17 +123,15 @@ class GCodeUtilsGUI(QMainWindow):
         self.previous_gcodes = deque()
 
     def _apply_coor_operator(self, op: operator) -> None:
+        coor = self._coor_dropdown.currentText()
+        new_val = self._new_coor_val.value()
         if self._specific_val_checkbox.isChecked():
-            coor = self._coor_dropdown.currentText()
-            new_val = self._new_coor_val.value()
             specific_val = self._specific_val_selector.value()
             self.gcode = [
                 op(line, coor, new_val, only_for_val=specific_val)
                 for line in self.gcode
             ]
         else:
-            coor = self._coor_dropdown.currentText()
-            new_val = self._new_coor_val.value()
             self.gcode = [op(line, coor, new_val) for line in self.gcode]
 
     @Slot()
