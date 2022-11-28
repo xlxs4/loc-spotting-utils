@@ -1,10 +1,9 @@
-from operator import add, sub
 from typing import Union
 
 from pygcode import GCodeLinearMove
 
 from eltypes import gcode_line, operator
-from operators import replace_op
+from operators import add, sub, replace_op
 
 
 def _apply_op_to_coor(
