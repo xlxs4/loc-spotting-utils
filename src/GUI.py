@@ -126,21 +126,17 @@ class GCodeUtilsGUI(QMainWindow):
     def _handle_plus_button(self):
         self._save_last_gcode()
         if self._specific_val_checkbox.isChecked():
+            coor = self._coor_dropdown.currentText()
+            new_val = self._new_coor_val.value()
+            specific_val = self._specific_val_selector.value()
             self.gcode = [
-                inc_coor(
-                    line,
-                    self._coor_dropdown.currentText(),
-                    self._new_coor_val.value(),
-                    only_for_val=self._specific_val_selector.value()
-                ) for line in self.gcode
+                inc_coor(line, coor, new_val, only_for_val=specific_val)
+                for line in self.gcode
             ]
         else:
-            self.gcode = [
-                inc_coor(
-                    line, self._coor_dropdown.currentText(),
-                    self._new_coor_val.value()
-                ) for line in self.gcode
-            ]
+            coor = self._coor_dropdown.currentText()
+            new_val = self._new_coor_val.value()
+            self.gcode = [inc_coor(line, coor, new_val) for line in self.gcode]
 
         self._update_gcode_viewer()
 
@@ -148,21 +144,17 @@ class GCodeUtilsGUI(QMainWindow):
     def _handle_minus_button(self):
         self._save_last_gcode()
         if self._specific_val_checkbox.isChecked():
+            coor = self._coor_dropdown.currentText()
+            new_val = self._new_coor_val.value()
+            specific_val = self._specific_val_selector.value()
             self.gcode = [
-                dec_coor(
-                    line,
-                    self._coor_dropdown.currentText(),
-                    self._new_coor_val.value(),
-                    only_for_val=self._specific_val_selector.value()
-                ) for line in self.gcode
+                dec_coor(line, coor, new_val, only_for_val=specific_val)
+                for line in self.gcode
             ]
         else:
-            self.gcode = [
-                dec_coor(
-                    line, self._coor_dropdown.currentText(),
-                    self._new_coor_val.value()
-                ) for line in self.gcode
-            ]
+            coor = self._coor_dropdown.currentText()
+            new_val = self._new_coor_val.value()
+            self.gcode = [dec_coor(line, coor, new_val) for line in self.gcode]
 
         self._update_gcode_viewer()
 
@@ -170,20 +162,18 @@ class GCodeUtilsGUI(QMainWindow):
     def _handle_replace_button(self):
         self._save_last_gcode()
         if self._specific_val_checkbox.isChecked():
+            coor = self._coor_dropdown.currentText()
+            new_val = self._new_coor_val.value()
+            specific_val = self._specific_val_selector.value()
             self.gcode = [
-                replace_coor(
-                    line,
-                    self._coor_dropdown.currentText(),
-                    self._new_coor_val.value(),
-                    only_for_val=self._specific_val_selector.value()
-                ) for line in self.gcode
+                replace_coor(line, coor, new_val, only_for_val=specific_val)
+                for line in self.gcode
             ]
         else:
+            coor = self._coor_dropdown.currentText()
+            new_val = self._new_coor_val.value()
             self.gcode = [
-                replace_coor(
-                    line, self._coor_dropdown.currentText(),
-                    self._new_coor_val.value()
-                ) for line in self.gcode
+                replace_coor(line, coor, new_val) for line in self.gcode
             ]
 
         self._update_gcode_viewer()
