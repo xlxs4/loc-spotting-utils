@@ -8,8 +8,8 @@ from operators import replace_op
 
 
 def _apply_op_to_coor(
-    line: gcode_line, coor: str, op: operator, val: int, additive: bool,
-    only_for_val: Union[int, None]
+    line: gcode_line, coor: str, op: operator, val: float, additive: bool,
+    only_for_val: Union[float, None]
 ) -> gcode_line:
     found = False
     gcodes = line.block.gcodes
@@ -31,22 +31,22 @@ def _apply_op_to_coor(
 
 
 def inc_coor(
-    line: gcode_line, coor: str, val: int, additive: bool,
-    only_for_val: Union[int, None]
+    line: gcode_line, coor: str, val: float, additive: bool,
+    only_for_val: Union[float, None]
 ) -> gcode_line:
     return _apply_op_to_coor(line, coor, add, val, additive, only_for_val)
 
 
 def dec_coor(
-    line: gcode_line, coor: str, val: int, additive: bool,
-    only_for_val: Union[int, None]
+    line: gcode_line, coor: str, val: float, additive: bool,
+    only_for_val: Union[float, None]
 ) -> gcode_line:
     return _apply_op_to_coor(line, coor, sub, val, additive, only_for_val)
 
 
 def replace_coor(
-    line: gcode_line, coor: str, val: int, additive: bool,
-    only_for_val: Union[int, None]
+    line: gcode_line, coor: str, val: float, additive: bool,
+    only_for_val: Union[float, None]
 ) -> gcode_line:
     return _apply_op_to_coor(
         line, coor, replace_op, val, additive, only_for_val
