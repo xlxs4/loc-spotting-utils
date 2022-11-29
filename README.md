@@ -223,7 +223,7 @@ The config model is verified using [`pydantic`](https://pydantic-docs.helpmanual
 
 ---
 
-The GUI is the backbone of the application, and it's described in `gui.py`:
+The GUI is the backbone of the application, and it's described in `GUI.py`:
 
 <details>
 <summary>Click to expand</summary>
@@ -237,11 +237,11 @@ from PySide6.QtGui import QIcon
 
 from PySide6.QtWidgets import (
     QMainWindow, QLabel, QPlainTextEdit, QVBoxLayout, QWidget, QToolBar,
-    QPushButton, QStatusBar, QGroupBox, QHBoxLayout, QComboBox, QSpinBox,
+    QPushButton, QStatusBar, QGroupBox, QHBoxLayout, QComboBox, QDoubleSpinBox,
     QFrame, QCheckBox, QFileDialog
 )
 
-from eltypes import config
+from eltypes import config, operator
 from GCodeUtils import dec_coor, inc_coor, replace_coor
 from highlighter import Highlighter
 from IOUtils import lines_to_text, read_gcode, text_to_lines, write_gcode
@@ -266,6 +266,7 @@ class GCodeUtilsGUI(QMainWindow):
         self._create_coor_group_box(selector_threshold)
         self._create_coor_frame_separator()
         self._create_new_val_group_box(selector_threshold)
+        self._create_additive_group_box()
 
         self.selected_gcode_path = QLabel(self.tr("Selected G-Code: "))
 
@@ -281,6 +282,7 @@ class GCodeUtilsGUI(QMainWindow):
         main_layout.addWidget(self._coor_group_box)
         main_layout.addWidget(self._frame_separator)
         main_layout.addWidget(self._new_val_group_box)
+        main_layout.addWidget(self._additive_group_box)
         self.setLayout(main_layout)
 
         self.setWindowTitle(self.tr("Lab-On-a-Chip Spotting Utilties"))
@@ -353,70 +355,42 @@ class GCodeUtilsGUI(QMainWindow):
         self.gcode = None
         self.previous_gcodes = deque()
 
+    def _apply_coor_operator(self, op: operator) -> None:
+        if self.gcode is not None:
+            coor = self._coor_dropdown.currentText()
+            new_val = self._new_coor_val.value()
+            additive = self._additive_checkbox.isChecked()
+            specific_val = self._specific_val_selector.value(
+            ) if self._specific_val_checkbox.isChecked() else None
+
+            new = []
+            times = 1
+            for line in self.gcode:
+                new_line, found = op(
+                    line, coor, new_val * times, additive, specific_val
+                )
+                if found:
+                    times += 1
+                new.append(new_line)
+
+            self.gcode = new
+
     @Slot()
     def _handle_plus_button(self):
         self._save_last_gcode()
-        if self._specific_val_checkbox.isChecked():
-            self.gcode = [
-                inc_coor(
-                    line,
-                    self._coor_dropdown.currentText(),
-                    self._new_coor_val.value(),
-                    only_for_val=self._specific_val_selector.value()
-                ) for line in self.gcode
-            ]
-        else:
-            self.gcode = [
-                inc_coor(
-                    line, self._coor_dropdown.currentText(),
-                    self._new_coor_val.value()
-                ) for line in self.gcode
-            ]
-
+        self._apply_coor_operator(inc_coor)
         self._update_gcode_viewer()
 
     @Slot()
     def _handle_minus_button(self):
         self._save_last_gcode()
-        if self._specific_val_checkbox.isChecked():
-            self.gcode = [
-                dec_coor(
-                    line,
-                    self._coor_dropdown.currentText(),
-                    self._new_coor_val.value(),
-                    only_for_val=self._specific_val_selector.value()
-                ) for line in self.gcode
-            ]
-        else:
-            self.gcode = [
-                dec_coor(
-                    line, self._coor_dropdown.currentText(),
-                    self._new_coor_val.value()
-                ) for line in self.gcode
-            ]
-
+        self._apply_coor_operator(dec_coor)
         self._update_gcode_viewer()
 
     @Slot()
     def _handle_replace_button(self):
         self._save_last_gcode()
-        if self._specific_val_checkbox.isChecked():
-            self.gcode = [
-                replace_coor(
-                    line,
-                    self._coor_dropdown.currentText(),
-                    self._new_coor_val.value(),
-                    only_for_val=self._specific_val_selector.value()
-                ) for line in self.gcode
-            ]
-        else:
-            self.gcode = [
-                replace_coor(
-                    line, self._coor_dropdown.currentText(),
-                    self._new_coor_val.value()
-                ) for line in self.gcode
-            ]
-
+        self._apply_coor_operator(replace_coor)
         self._update_gcode_viewer()
 
     @Slot()
@@ -466,7 +440,7 @@ class GCodeUtilsGUI(QMainWindow):
         self._coor_dropdown = QComboBox()
         self._coor_dropdown.addItems(['X', 'Y', 'Z'])
 
-        self._new_coor_val = QSpinBox()
+        self._new_coor_val = QDoubleSpinBox()
         self._new_coor_val.setRange(
             selector_threshold["min"], selector_threshold["max"]
         )
@@ -488,7 +462,7 @@ class GCodeUtilsGUI(QMainWindow):
 
         self._specific_val_checkbox = QCheckBox(self.tr("Specific value only"))
 
-        self._specific_val_selector = QSpinBox()
+        self._specific_val_selector = QDoubleSpinBox()
         self._specific_val_selector.setRange(
             selector_threshold["min"], selector_threshold["max"]
         )
@@ -497,6 +471,20 @@ class GCodeUtilsGUI(QMainWindow):
         layout.addWidget(self._specific_val_selector)
 
         self._new_val_group_box.setLayout(layout)
+
+    def _create_additive_group_box(self) -> None:
+        self._additive_group_box = QGroupBox(
+            self.tr("Apply coordinate operations in additive manner")
+        )
+        layout = QHBoxLayout()
+
+        self._additive_checkbox = QCheckBox(
+            self.tr("Additive operation application")
+        )
+
+        layout.addWidget(self._additive_checkbox)
+
+        self._additive_group_box.setLayout(layout)
 
     def _browse_gcode(self) -> None:
         dialog = QFileDialog(self)
@@ -527,13 +515,15 @@ class GCodeUtilsGUI(QMainWindow):
             write_gcode(gcode_filename, self.gcode)
 
     def _update_gcode_viewer(self) -> None:
-        self.gcode_viewer.setPlainText(lines_to_text(self.gcode))
+        if self.gcode is not None:
+            self.gcode_viewer.setPlainText(lines_to_text(self.gcode))
 
     def _update_gcode_from_text(self, text: str) -> None:
         self.gcode = text_to_lines(text)
 
     def _save_last_gcode(self) -> None:
-        self.previous_gcodes.append(deepcopy(self.gcode))
+        if self.gcode is not None:
+            self.previous_gcodes.append(deepcopy(self.gcode))
 ```
 
 </details>
@@ -588,19 +578,19 @@ Applying each of these operations can be reversed through the **Undo** button.
 <summary>Click to expand</summary>
 
 ```python
-from operator import add, sub
 from typing import Union
 
 from pygcode import GCodeLinearMove
 
 from eltypes import gcode_line, operator
-from operators import replace_op
+from operators import add, sub, replace_op
 
 
 def _apply_op_to_coor(
-    line: gcode_line, coor: str, op: operator, val: int,
-    only_for_val: Union[int, None]
+    line: gcode_line, coor: str, op: operator, val: float, additive: bool,
+    only_for_val: Union[float, None]
 ) -> gcode_line:
+    found = False
     gcodes = line.block.gcodes
     for gcode in gcodes:
         if type(gcode) is GCodeLinearMove:
@@ -609,100 +599,37 @@ def _apply_op_to_coor(
                 if only_for_val is not None:
                     if current_coor == only_for_val:
                         setattr(gcode, coor, op(current_coor, val))
+                        if additive:
+                            found = True
                 else:
                     setattr(gcode, coor, op(current_coor, val))
+                    if additive:
+                        found = True
 
-    return line
+    return line, found
 
 
 def inc_coor(
-    line: gcode_line,
-    coor: str,
-    val: int,
-    only_for_val: int = None
+    line: gcode_line, coor: str, val: float, additive: bool,
+    only_for_val: Union[float, None]
 ) -> gcode_line:
-    return _apply_op_to_coor(line, coor, add, val, only_for_val)
+    return _apply_op_to_coor(line, coor, add, val, additive, only_for_val)
 
 
 def dec_coor(
-    line: gcode_line,
-    coor: str,
-    val: int,
-    only_for_val: int = None
+    line: gcode_line, coor: str, val: float, additive: bool,
+    only_for_val: Union[float, None]
 ) -> gcode_line:
-    return _apply_op_to_coor(line, coor, sub, val, only_for_val)
+    return _apply_op_to_coor(line, coor, sub, val, additive, only_for_val)
 
 
 def replace_coor(
-    line: gcode_line,
-    coor: str,
-    val: int,
-    only_for_val: int = None
+    line: gcode_line, coor: str, val: float, additive: bool,
+    only_for_val: Union[float, None]
 ) -> gcode_line:
-    return _apply_op_to_coor(line, coor, replace_op, val, only_for_val)
-```
-
-</details>
-
-Note that replicating doesn't have to do with G-Code, just with general text.
-
----
-
-`IOUtils.py`, respectively, is where the logic to read from/write to G-Code, read config and convert from G-Code to text and back for displaying it in the GUI:
-
-<details>
-<summary>Click to expand</summary>
-
-```python
-from pathlib import Path
-from tomllib import load
-
-from config_model import Config
-from eltypes import config, config_model, gcode_line, lines, str_lines
-
-
-def _lines_to_str_lines(lines: lines) -> str_lines:
-    return [str(line) for line in lines]
-
-
-def lines_to_text(lines: lines) -> str:
-    return '\n'.join(str(g) for g in lines)
-
-
-def text_to_lines(text: str) -> lines:
-    return [gcode_line(line.rstrip()) for line in text.split('\n')]
-
-
-def _read_line_by_line(filename: Path) -> lines:
-    with open(filename) as file:
-        return [gcode_line(line.rstrip()) for line in file]
-
-
-def read_gcode(filename: Path) -> lines:
-    return _read_line_by_line(filename)
-
-
-def _write_line_by_line(filename: Path, lines: lines):
-    lines = _lines_to_str_lines(lines)
-    with open(filename, 'w+') as file:
-        for line in lines[:-1]:
-            file.write(line + '\n')
-        file.write(lines[-1])
-
-
-def write_gcode(filename: Path, lines: lines):
-    _write_line_by_line(filename, lines)
-
-
-def _read_toml(filename: Path) -> config:
-    with open(filename, mode='rb') as fp:
-        config = load(fp)
-    return config
-
-
-def read_config(filename: Path) -> config_model:
-    conf_from_file = _read_toml(filename)
-    return Config.parse_obj(conf_from_file)
+    return _apply_op_to_coor(
+        line, coor, replace_op, val, additive, only_for_val
+    )
 ```
 
 </details>
@@ -776,8 +703,14 @@ However, absolute paths with `pyprojroot` can help a lot during development - re
 Lastly, `operators.py` holds a custom operator used in `GCodeUtils.py`:
 
 ```python
+from operator import add, sub
+
+add = add
+sub = sub
+
 def replace_op(a, b):
     return b
+
 ```
 
 ---
