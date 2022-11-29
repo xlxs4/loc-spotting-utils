@@ -575,6 +575,8 @@ There are four G-Code operations supported:
 
 The user can select whether to apply the operations to the `X`, `Y` or `Z` coordinates.
 Additionally, instead of applying an operations to *every* `X|Y|Z` coordinate value, the user can instead only apply it to the `X|Y|Z` coordinate that are of a specified value.
+Also, an operator can be applied "additively" (makes sense for `Add` and `Sub`).
+What this means is, for example, if you want to `Add` 2 to all the X coors but you do so additively, the first  X will increase by 2, the second by 4, the third by 6, and so on.
 
 Applying each of these operations can be reversed through the **Undo** button.
 
