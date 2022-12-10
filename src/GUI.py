@@ -172,7 +172,7 @@ class GCodeUtilsGUI(QMainWindow):
         sel_text = cursor.selection().toPlainText().rstrip() + '\n'
 
         val = self._new_coor_val.value()
-        times = val if val > 0 else 1
+        times = int(val) if val > 0 else 1
 
         new_text = text[:sel_start] + sel_text * times + text[sel_start:]
 
