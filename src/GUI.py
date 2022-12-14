@@ -1,5 +1,6 @@
 from collections import deque
 from copy import deepcopy
+from pathlib import Path
 
 from PySide6.QtCore import QSize, Slot
 from PySide6.QtGui import QIcon
@@ -263,9 +264,10 @@ class GCodeUtilsGUI(QMainWindow):
 
         if dialog.exec():
             gcode_filename = dialog.selectedFiles()[0]
+            gcode_filename = Path(gcode_filename)
 
             self.selected_gcode_path.setText(
-                self.tr(f"Selected G-Code: {gcode_filename}")
+                self.tr(f"Selected G-Code: {gcode_filename.name}")
             )
             self.gcode = read_gcode(gcode_filename)
 
