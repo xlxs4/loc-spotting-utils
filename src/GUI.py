@@ -1,5 +1,6 @@
 from collections import deque
 from copy import deepcopy
+import logging
 from pathlib import Path
 
 from PySide6.QtCore import QSize, Slot
@@ -273,6 +274,8 @@ class GCodeUtilsGUI(QMainWindow):
 
             self._update_gcode_viewer()
 
+            logging.info(f"Loaded file {gcode_filename.name} successfully.")
+
     def _save_gcode(self) -> None:
         dialog = QFileDialog(self)
         dialog.setFileMode(QFileDialog.AnyFile)
@@ -284,6 +287,8 @@ class GCodeUtilsGUI(QMainWindow):
         if dialog.exec():
             gcode_filename = dialog.selectedFiles()[0]
             write_gcode(gcode_filename, self.gcode)
+
+            logging.info(f"Saved file {gcode_filename.name} successfully.")
 
     def _update_gcode_viewer(self) -> None:
         if self.gcode is not None:
