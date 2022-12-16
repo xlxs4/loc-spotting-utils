@@ -29,9 +29,8 @@ def read_gcode(filename: Path) -> lines:
 def _write_line_by_line(filename: Path, lines: lines):
     lines = _lines_to_str_lines(lines)
     with open(filename, 'w+') as file:
-        for line in lines[:-1]:
+        for line in lines:
             file.write(line + '\n')
-        file.write(lines[-1])
 
 
 def write_gcode(filename: Path, lines: lines):
