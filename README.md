@@ -178,6 +178,7 @@ Icons:
 - <a target="_blank" href="https://icons8.com/icon/occUe06FpCMr/subtract">Subtract</a> icon by <a target="_blank" href="https://icons8.com">Icons8</a>
 - <a target="_blank" href="https://icons8.com/icon/2VYfDlfknSJE/multiply">Multiply</a> icon by <a target="_blank" href="https://icons8.com">Icons8</a>
 - <a target="_blank" href="https://icons8.com/icon/e1AG2cMLWdUG/return">Return</a> icon by <a target="_blank" href="https://icons8.com">Icons8</a>
+- <a target="_blank" href="https://icons8.com/icon/wWzz4O7W1EY3/delete-key">Delete Key</a> icon by <a target="_blank" href="https://icons8.com">Icons8</a>
 
 #### Source
 
@@ -231,6 +232,8 @@ The GUI is the backbone of the application, and it's described in `GUI.py`:
 ```python
 from collections import deque
 from copy import deepcopy
+import logging
+from pathlib import Path
 
 from PySide6.QtCore import QSize, Slot
 from PySide6.QtGui import QIcon
@@ -333,6 +336,14 @@ class GCodeUtilsGUI(QMainWindow):
         toolbar.addWidget(replace_button)
         toolbar.addSeparator()
 
+        delete_button = QPushButton(
+            QIcon(str(get_path("assets-delete", relative_paths))), "", self
+        )
+        delete_button.setStatusTip(self.tr("Delete selection"))
+        delete_button.clicked.connect(self._handle_delete_button)
+
+        toolbar.addWidget(delete_button)
+
         replicate_button = QPushButton(
             QIcon(str(get_path("assets-multiply", relative_paths))), "", self
         )
@@ -394,19 +405,56 @@ class GCodeUtilsGUI(QMainWindow):
         self._update_gcode_viewer()
 
     @Slot()
-    def _handle_replicate_button(self):
+    def _handle_delete_button(self):
+        cursor = self.gcode_viewer.textCursor()
+
+        sel_start = cursor.selectionStart()
+        sel_end = cursor.selectionEnd()
+
+        if sel_end == 0:
+            return
+
+        text = self.gcode_viewer.toPlainText().rstrip()
+        if sel_start != 0:
+            if text[sel_start - 1] != '\n':
+                last_newline = text.rfind('\n', 0, sel_start - 1)
+                sel_start = last_newline + 1 if last_newline != -1 else 0
+
+        text_length = len(text)
+        if sel_end >= text_length:
+            sel_end = text_length - 1
+
+        if text[sel_end] != '\n':
+            if text[sel_end - 1] != '\n':
+                next_newline = text.find('\n', sel_end)
+                sel_end = next_newline + 1 if next_newline != -1 else text_length
+        else:
+            sel_end += 1
+
+        new_text = text[:sel_start] + text[sel_end:]
+
         self._save_last_gcode()
+        self._update_gcode_from_text(new_text)
+        self._update_gcode_viewer()
+
+    @Slot()
+    def _handle_replicate_button(self):
         cursor = self.gcode_viewer.textCursor()
         sel_start = cursor.selectionStart()
+        sel_end = cursor.selectionEnd()
+
+        if sel_end == 0:
+            return
 
         text = self.gcode_viewer.toPlainText()
         sel_text = cursor.selection().toPlainText().rstrip() + '\n'
 
         val = self._new_coor_val.value()
-        times = val if val > 0 else 1
+        times = int(val) if val > 0 else 1
 
         new_text = text[:sel_start] + sel_text * times + text[sel_start:]
 
+        self._save_last_gcode()
         self._update_gcode_from_text(new_text)
         self._update_gcode_viewer()
 
@@ -494,13 +542,16 @@ class GCodeUtilsGUI(QMainWindow):
 
         if dialog.exec():
             gcode_filename = dialog.selectedFiles()[0]
+            gcode_filename = Path(gcode_filename)
 
             self.selected_gcode_path.setText(
-                self.tr(f"Selected G-Code: {gcode_filename}")
+                self.tr(f"Selected G-Code: {gcode_filename.name}")
             )
             self.gcode = read_gcode(gcode_filename)
 
             self._update_gcode_viewer()
+
+            logging.info(f"Loaded file {gcode_filename.name} successfully.")
 
     def _save_gcode(self) -> None:
         dialog = QFileDialog(self)
@@ -513,6 +564,8 @@ class GCodeUtilsGUI(QMainWindow):
         if dialog.exec():
             gcode_filename = dialog.selectedFiles()[0]
             write_gcode(gcode_filename, self.gcode)
+
+            logging.info(f"Saved file {gcode_filename.name} successfully.")
 
     def _update_gcode_viewer(self) -> None:
         if self.gcode is not None:
@@ -562,6 +615,7 @@ There are four G-Code operations supported:
 2. **Sub**: Decrease coordinate(s) by specified amount (minus button)
 3. **Replace**: Set coordinate(s) to new value (replace button)
 4. **Replicate**: Replicated selected text X times (multiply button)
+5. **Delete**: Delete selected text (deletes the lines that contain the selection to avoid G-Code parsing errors)
 
 The user can select whether to apply the operations to the `X`, `Y` or `Z` coordinates.
 Additionally, instead of applying an operations to *every* `X|Y|Z` coordinate value, the user can instead only apply it to the `X|Y|Z` coordinate that are of a specified value.
@@ -677,6 +731,7 @@ from pyprojroot import here
 
 _PATHS = {
     "assets": "assets/",
+    "assets-delete": "assets/delete.png",
     "assets-minus": "assets/minus.png",
     "assets-multiply": "assets/multiply.png",
     "assets-plus": "assets/plus.png",

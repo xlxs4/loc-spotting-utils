@@ -104,6 +104,14 @@ class GCodeUtilsGUI(QMainWindow):
         toolbar.addWidget(replace_button)
         toolbar.addSeparator()
 
+        delete_button = QPushButton(
+            QIcon(str(get_path("assets-delete", relative_paths))), "", self
+        )
+        delete_button.setStatusTip(self.tr("Delete selected lines"))
+        delete_button.clicked.connect(self._handle_delete_button)
+
+        toolbar.addWidget(delete_button)
+
         replicate_button = QPushButton(
             QIcon(str(get_path("assets-multiply", relative_paths))), "", self
         )
@@ -165,10 +173,46 @@ class GCodeUtilsGUI(QMainWindow):
         self._update_gcode_viewer()
 
     @Slot()
-    def _handle_replicate_button(self):
+    def _handle_delete_button(self):
+        cursor = self.gcode_viewer.textCursor()
+
+        sel_start = cursor.selectionStart()
+        sel_end = cursor.selectionEnd()
+
+        if sel_end == 0:
+            return
+
+        text = self.gcode_viewer.toPlainText().rstrip()
+        if sel_start != 0:
+            if text[sel_start - 1] != '\n':
+                last_newline = text.rfind('\n', 0, sel_start - 1)
+                sel_start = last_newline + 1 if last_newline != -1 else 0
+
+        text_length = len(text)
+        if sel_end >= text_length:
+            sel_end = text_length - 1
+
+        if text[sel_end] != '\n':
+            if text[sel_end - 1] != '\n':
+                next_newline = text.find('\n', sel_end)
+                sel_end = next_newline + 1 if next_newline != -1 else text_length
+        else:
+            sel_end += 1
+
+        new_text = text[:sel_start] + text[sel_end:]
+
         self._save_last_gcode()
+        self._update_gcode_from_text(new_text)
+        self._update_gcode_viewer()
+
+    @Slot()
+    def _handle_replicate_button(self):
         cursor = self.gcode_viewer.textCursor()
         sel_start = cursor.selectionStart()
+        sel_end = cursor.selectionEnd()
+
+        if sel_end == 0:
+            return
 
         text = self.gcode_viewer.toPlainText()
         sel_text = cursor.selection().toPlainText().rstrip() + '\n'
@@ -178,6 +222,7 @@ class GCodeUtilsGUI(QMainWindow):
 
         new_text = text[:sel_start] + sel_text * times + text[sel_start:]
 
+        self._save_last_gcode()
         self._update_gcode_from_text(new_text)
         self._update_gcode_viewer()
 

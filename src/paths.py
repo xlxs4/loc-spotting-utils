@@ -4,6 +4,7 @@ from pyprojroot import here
 
 _PATHS = {
     "assets": "assets/",
+    "assets-delete": "assets/delete.png",
     "assets-minus": "assets/minus.png",
     "assets-multiply": "assets/multiply.png",
     "assets-plus": "assets/plus.png",
