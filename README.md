@@ -18,6 +18,9 @@ A repository to host code and a bunch of other stuff. These have to do with our 
 
 - [Description](#description)
 - [Table of Contents](#table-of-contents)
+- [Usage](#usage)
+  - [End User](#end-user)
+  - [Developer](#developer)
 - [GUI Spotting Utilities](#gui-spotting-utilities)
   - [Description](#description-1)
   - [File Structure](#file-structure)
@@ -28,6 +31,22 @@ A repository to host code and a bunch of other stuff. These have to do with our 
     - [Rest](#rest)
 
 </details>
+
+## Usage
+
+### End User
+
+Grab the binary from the [releases](https://github.com/xlxs4/loc-spotting-utils/releases) page.
+Make sure that the `.zip` you selected is appropriate for your platform, e.g., `windows.zip`.
+Extract the archive, **navigate to the `main` directory**, and start the `main` executable.
+
+### Developer
+
+Grab the repository, and make sure you have python and [poetry](https://python-poetry.org/docs/) installed.
+- `poetry lock`
+- `poetry install --no-root -E build -E format` (`build` installs the dependencies needed for building the bundle, `format` installs the dependencies needed for `yapf`)
+- make sure to activate the poetry environment, by sourcing the appropriate `activate` script, e.g. `activate.ps1` for Powershell, located in `.venv/Scripts/`
+- for an example on how to build and format, take a look at `.github/workflows/ci.yml`
 
 ## GUI Spotting Utilities
 
