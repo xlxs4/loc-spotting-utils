@@ -10,6 +10,7 @@ _PATHS = {
     "assets-plus": "assets/plus.png",
     "assets-replace": "assets/replace.png",
     "assets-undo": "assets/undo.png",
+    "assets-header": "assets/header.png",
     "config": "src/config.toml"
 }
 

@@ -12,7 +12,7 @@ from PySide6.QtWidgets import (
     QFrame, QCheckBox, QFileDialog
 )
 
-from eltypes import config, operator
+from eltypes import config, gcode_line, operator
 from GCodeUtils import dec_coor, inc_coor, replace_coor
 from highlighter import Highlighter
 from IOUtils import lines_to_text, read_gcode, text_to_lines, write_gcode
@@ -128,6 +128,15 @@ class GCodeUtilsGUI(QMainWindow):
         undo_button.clicked.connect(self._handle_undo_button)
 
         toolbar.addWidget(undo_button)
+        toolbar.addSeparator()
+
+        header_button = QPushButton(
+            QIcon(str(get_path("assets-header", relative_paths))), "", self
+        )
+        header_button.setStatusTip(self.tr("Add/Remove header"))
+        header_button.clicked.connect(self._handle_header_button)
+
+        toolbar.addWidget(header_button)
 
         self.setStatusBar(QStatusBar(self))
 
@@ -231,6 +240,20 @@ class GCodeUtilsGUI(QMainWindow):
         if self.previous_gcodes:
             self.gcode = self.previous_gcodes.pop()
             self._update_gcode_viewer()
+
+    @Slot()
+    def _handle_header_button(self) -> None:
+        check_args = (
+            (0, 0, 'G', '21'),
+            (1, 0, 'G', '91'),
+            (-1, 0, 'M', '84')
+        )
+        for args in check_args:
+            if not self._check_gcode_equals(*args):
+                self._add_header()
+                return
+
+        self._remove_header()
 
     def _create_io_group_box(self) -> None:
         self._io_group_box = QGroupBox(self.tr("IO"))
@@ -345,3 +368,24 @@ class GCodeUtilsGUI(QMainWindow):
     def _save_last_gcode(self) -> None:
         if self.gcode is not None:
             self.previous_gcodes.append(deepcopy(self.gcode))
+
+    def _check_gcode_equals(self, line_index, gcode_index, letter, value):
+        try:
+            gcode = self.gcode[line_index].block.gcodes[gcode_index]
+            return gcode.word.letter == letter and gcode.word.value_str == value
+        except IndexError:
+            return False
+        
+    def _add_header(self):
+        self._save_last_gcode()
+
+        self.gcode.insert(0, gcode_line("G21"))
+        self.gcode.insert(1, gcode_line("G91"))
+        self.gcode.append(gcode_line("M84"))
+
+        self._update_gcode_viewer()
+
+    def _remove_header(self):
+        self._save_last_gcode()
+        self.gcode = self.gcode[2:-1]
+        self._update_gcode_viewer()
