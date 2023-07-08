@@ -10,6 +10,8 @@
 ## Description
 
 A repository to host code and a bunch of other stuff. These have to do with our efforts to repurpose a [Prusa i3 MKRS3+](https://www.prusa3d.com/category/original-prusa-i3-mk3s/) 3D printer to serve as a DIY DNA microarray spotter so that we can put *S. cerevisiae* cells inside a PDMS Lab-On-a-Chip (check [here](https://gitlab.com/acubesat/su/microfluidics) too!).
+The application has been tested locally to work on Windows 10, 11, various Linux distros and Apple Silicon.
+CI builds for Ubuntu, Windows, Mac (Intel, not ARM).
 
 ## Table of Contents
 
