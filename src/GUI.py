@@ -243,11 +243,7 @@ class GCodeUtilsGUI(QMainWindow):
 
     @Slot()
     def _handle_header_button(self) -> None:
-        check_args = (
-            (0, 0, 'G', '21'),
-            (1, 0, 'G', '91'),
-            (-1, 0, 'M', '84')
-        )
+        check_args = ((0, 0, 'G', '21'), (1, 0, 'G', '91'), (-1, 0, 'M', '84'))
         for args in check_args:
             if not self._check_gcode_equals(*args):
                 self._add_header()
@@ -375,7 +371,7 @@ class GCodeUtilsGUI(QMainWindow):
             return gcode.word.letter == letter and gcode.word.value_str == value
         except IndexError:
             return False
-        
+
     def _add_header(self):
         self._save_last_gcode()
 
